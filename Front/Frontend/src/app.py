@@ -9,6 +9,8 @@ def main( page: ft.Page ):
     titulo:str = 'Gestor de Inventario'
     page.add( ft.Text(titulo, color = ft.Colors.BLUE, size = 28) )
     
+    page.add( ft.SearchBar(bar_hint_text="Buscar") )
+    
     txtDescripcion:str = 'Bienvenido a tu Gestor de Inventario Retail'
     page.add( ft.Text(txtDescripcion, color = ft.Colors.BLACK) )
     
