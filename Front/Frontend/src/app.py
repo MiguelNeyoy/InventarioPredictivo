@@ -1,12 +1,16 @@
 import flet as ft
 
-
 def main( page: ft.Page ):
     
     #Titulo Interfaz
     page.title = "Interfaz Grafica"
+    page.bgcolor = "white"
+
+    titulo:str = 'Gestor de Inventario'
+    page.add( ft.Text(titulo, color = ft.Colors.BLUE, size = 28) )
     
-    page.add( ft.Text("Inventario", color = ft.Colors.BLUE, size = 28) )
+    txtDescripcion:str = 'Bienvenido a tu Gestor de Inventario Retail'
+    page.add( ft.Text(txtDescripcion, color = ft.Colors.BLACK) )
     
     page.add(
         
