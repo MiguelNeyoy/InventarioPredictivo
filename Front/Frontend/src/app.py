@@ -13,7 +13,7 @@ def main( page: ft.Page ):
     page.add( ft.Text(txtDescripcion, color = ft.Colors.BLACK) )
    
     campos = ft.Column(
-        
+        spacing = 30,
         controls = [
             
             ft.Button("Procesadores", color = ft.Colors.WHITE ),
