@@ -4,7 +4,7 @@ def main( page: ft.Page ):
     
     #Titulo Interfaz
     page.title = "Interfaz Grafica"
-    page.bgcolor = "white"
+    page.bgcolor = "#65F7DB"
 
     titulo:str = 'Gestor de Inventario'
     txtDescripcion:str = 'Bienvenido a tu Gestor de Inventario Retail'
@@ -16,10 +16,10 @@ def main( page: ft.Page ):
     
     campos = ft.Column(
         controls = [
-            ft.ElevatedButton("Procesadores", color = "white", width = 150),
-            ft.ElevatedButton("Memorias RAM", color = "white", width = 150),
-            ft.ElevatedButton("Fuentes de Poder", color = "white", width = 150),
-            ft.ElevatedButton("Tarjetas Grafica", color = "white", width = 150),
+            ft.ElevatedButton("Procesadores", bgcolor = "#D4F4F9", color = "#6588F7", width = 150),
+            ft.ElevatedButton("Memorias RAM", bgcolor = "#D4F4F9", color ="#6588F7", width = 150),
+            ft.ElevatedButton("Fuentes de Poder", bgcolor = "#D4F4F9", color = "#6588F7", width = 150),
+            ft.ElevatedButton("Tarjetas Grafica", bgcolor = "#D4F4F9", color = "#6588F7", width = 150),
         ],
         spacing = 30,
     )
@@ -40,8 +40,90 @@ def main( page: ft.Page ):
                     ft.DataCell( ft.Text("3200") ),
                     ft.DataCell( ft.Text("20") )
                 ]
-            )
+            ),
+            ft.DataRow(
+                cells = [
+                    ft.DataCell( ft.Text("AMD Ryzen 7 5800X3D") ),
+                    ft.DataCell( ft.Text("Procesador") ),
+                    ft.DataCell( ft.Text("5464") ),
+                    ft.DataCell( ft.Text("17") )
+                ]
+            ),
+            ft.DataRow(
+                cells = [
+                    ft.DataCell( ft.Text("Corsair Vengeance 16GB DDR4") ),
+                    ft.DataCell( ft.Text("Memoria RAM") ),
+                    ft.DataCell( ft.Text("847") ),
+                    ft.DataCell( ft.Text("29") )
+                ]
+            ),ft.DataRow(
+                cells = [
+                    ft.DataCell( ft.Text("Corsair RM750x 750W Gold") ),
+                    ft.DataCell( ft.Text("Fuente de Poder") ),
+                    ft.DataCell( ft.Text("1674") ),
+                    ft.DataCell( ft.Text("11") )
+                ]
+            ),
+            ft.DataRow(
+                cells = [
+                    ft.DataCell( ft.Text("Cooler Master MWE 650W Bronze") ),
+                    ft.DataCell( ft.Text("Fuente de Poder") ),
+                    ft.DataCell( ft.Text("924") ),
+                    ft.DataCell( ft.Text("14") )
+                ]
+            ),
+            ft.DataRow(
+                cells = [
+                    ft.DataCell( ft.Text("NVIDIA RTX 4060") ),
+                    ft.DataCell( ft.Text("Tarjeta Grafica") ),
+                    ft.DataCell( ft.Text("7487") ),
+                    ft.DataCell( ft.Text("10") )
+                ]
+            ),
+            ft.DataRow(
+                cells = [
+                    ft.DataCell( ft.Text("AMD RX 6700 XT") ),
+                    ft.DataCell( ft.Text("Tarjeta Grafica") ),
+                    ft.DataCell( ft.Text("5200") ),
+                    ft.DataCell( ft.Text("5") )
+                ]
+            ),
+            ft.DataRow(
+                cells = [
+                    ft.DataCell( ft.Text("Intel Core i5 12400F") ),
+                    ft.DataCell( ft.Text("Procesador") ),
+                    ft.DataCell( ft.Text("4878") ),
+                    ft.DataCell( ft.Text("17") )
+                ]
+            ),
+            ft.DataRow(
+                cells = [
+                    ft.DataCell( ft.Text("Intel Core i7 12700K") ),
+                    ft.DataCell( ft.Text("Procesador") ),
+                    ft.DataCell( ft.Text("6988") ),
+                    ft.DataCell( ft.Text("16") )
+                ]
+            ),
+            ft.DataRow(
+                cells = [
+                    ft.DataCell( ft.Text("G.Skill Trident Z 32GB DDR4") ),
+                    ft.DataCell( ft.Text("Memoria RAM") ),
+                    ft.DataCell( ft.Text("1612") ),
+                    ft.DataCell( ft.Text("31") )
+                ]
+            ),
+            ft.DataRow(
+                cells = [
+                    ft.DataCell( ft.Text("Crucial Ballistix 16GB DDR4") ),
+                    ft.DataCell( ft.Text("Memoria RAM") ),
+                    ft.DataCell( ft.Text("1244") ),
+                    ft.DataCell( ft.Text("18") )
+                ]
+            ),
         ],
+        border = ft.Border.all(2,"black"), 
+        border_radius = 5,
+        bgcolor = "white"
     )
     
     page.add(tablaInventario)
