@@ -1,1 +1,23 @@
+*.log
+*.tmp
+.env
+.env.local
+
+# No subir el archivo .gitignore a GitHub
+.gitignore
+
+# Entornos virtuales de Python
+venv/
+mi_entrono/
+env/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Otros archivos locales
+ventas_totales.csv
+
+#archivos ignorados
 .cvs
+.pyc
