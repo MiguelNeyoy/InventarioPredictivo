@@ -3,16 +3,16 @@ import numpy as np
 
 print("Iniciando la simulación de datos de ventas...")
 
-# 1. Definimos el periodo de tiempo (2 años de historia hasta el día de hoy)
+#  Definimos el periodo de tiempo (2 años de historia hasta el día de hoy)
 fechas = pd.date_range(start="2024-01-01", end="2026-02-27")
 
-# 2. Elegimos productos realistas para la costa
+# Elegimos productos realistas para la costa
 productos = ["Cerveza Pacifico", "Bloqueador Solar", "Hielo en Bolsa"]
 
 # Aquí guardaremos todos los registros antes de hacer el Excel
 registros_ventas = []
 
-# 3. Simulamos las ventas día por día, producto por producto
+# Simulamos las ventas día por día, producto por producto
 for producto in productos:
     
     # Cada producto tiene una venta base diferente
@@ -49,14 +49,14 @@ for producto in productos:
             "Ventas": venta_del_dia
         })
 
-# 4. Convertimos la lista en una tabla (DataFrame)
+#  Convertimos la lista en una tabla (DataFrame)
 df_maestro = pd.DataFrame(registros_ventas)
 
-# 5. EL TOQUE DE REALIDAD: Mezclamos las filas aleatoriamente
+#  EL TOQUE DE REALIDAD: Mezclamos las filas aleatoriamente
 # Esto simula un registro real donde la gente compra a distintas horas
 df_maestro = df_maestro.sample(frac=1).reset_index(drop=True)
 
-# 6. Exportamos a CSV
+#  Exportamos a CSV
 df_maestro.to_csv("ventas_totales.csv", index=False)
 
 print("¡Éxito! Archivo 'ventas_totales.csv' generado correctamente.")
