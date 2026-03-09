@@ -22,8 +22,8 @@ def main(page: ft.Page):
     )
     
     
-    #
-    topbar = ft.Container(
+    #Boton para subir archivo .csv
+    botonCSV = ft.Container(
         bgcolor="white",
         padding=15,
         content=ft.Row(
@@ -38,8 +38,31 @@ def main(page: ft.Page):
             ]
         )
     )
+    
+    
+    tablaInventario = ft.DataTable(
+        columns = [
+            ft.DataColumn( ft.Text("Articulo") ),
+            ft.DataColumn( ft.Text("Categoria") ),
+            ft.DataColumn( ft.Text("Precio") ),
+            ft.DataColumn( ft.Text("Stock") )
+        ]
+    )
+    
+    diseñoTablaInventario = ft.Container(
+        bgcolor= "",
+        padding= 20,
+        border_radius= 100,
+        content = ft.Column(
+            controls = [
+                ft.Text("Inventario"),
+                tablaInventario
+            ]
+        )
+    )
             
     page.add(columnaLateral)
-    page.add(topbar)
+    page.add(botonCSV)
+    page.add(diseñoTablaInventario)
 
 ft.app(target=main)
