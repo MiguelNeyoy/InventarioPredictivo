@@ -67,7 +67,7 @@ def main(page: ft.Page):
         expand = True,
         controls = [
             
-            columnaLateral,
+            botonCSV,
             
             ft.Container(
                 padding = 20,
@@ -93,9 +93,16 @@ def main(page: ft.Page):
         ]
     )
     
-    page.add(columnaLateral)
-    page.add(botonCSV)
-    page.add(diseñoTablaInventario)
-    page.add(menu)
+    
+    #Visualiza el como debe de verse la interfaz
+    page.add(
+        ft.Row(
+            expand = True,
+            controls = [
+                columnaLateral,
+                menu
+            ]
+        )
+    )
 
-ft.app(target=main)
+ft.run(main)
