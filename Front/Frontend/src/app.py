@@ -3,7 +3,7 @@ import flet as ft
 def main(page: ft.Page):
 
     page.title = ""
-    page.bgcolor = "#f5f7fb"
+    page.bgcolor = ""
 
     # Columna Lateral Izquierda
     columnaLateral = ft.Container(
@@ -39,7 +39,7 @@ def main(page: ft.Page):
         )
     )
     
-    
+    #Tabla que visualiza el archivo .csv
     tablaInventario = ft.DataTable(
         columns = [
             ft.DataColumn( ft.Text("Articulo") ),
@@ -49,6 +49,7 @@ def main(page: ft.Page):
         ]
     )
     
+    #Sire para añadir el diseño que tendra la tabla
     diseñoTablaInventario = ft.Container(
         bgcolor= "",
         padding= 20,
@@ -60,9 +61,41 @@ def main(page: ft.Page):
             ]
         )
     )
+    
+    
+    menu = ft.Column(
+        expand = True,
+        controls = [
             
+            columnaLateral,
+            
+            ft.Container(
+                padding = 20,
+                content = ft.Column(
+                    controls = [
+                        ft.Row(
+                            alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
+                            controls = [
+                                ft.Column(
+                                    controls = [
+                                        ft.Text("Gestor de Inventario Predictivo"),
+                                        ft.Text("Bienvenido a tu gestor de invenatrio reatil.\nPuedes revisar tu inventario u tener una prediccion del mismo.")
+                                    ]
+                                )
+                            ]
+                        ),
+                        ft.Container(height = 20),
+                        
+                        diseñoTablaInventario
+                    ]
+                )
+            )
+        ]
+    )
+    
     page.add(columnaLateral)
     page.add(botonCSV)
     page.add(diseñoTablaInventario)
+    page.add(menu)
 
 ft.app(target=main)
