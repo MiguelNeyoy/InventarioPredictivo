@@ -21,6 +21,25 @@ def main(page: ft.Page):
         )
     )
     
+    
+    #
+    topbar = ft.Container(
+        bgcolor="white",
+        padding=15,
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            controls = [ 
+                
+                ft.Row(
+                    controls = [
+                        ft.Button("Subir Archivo .csv")
+                    ]
+                )
+            ]
+        )
+    )
+            
     page.add(columnaLateral)
+    page.add(topbar)
 
 ft.app(target=main)
