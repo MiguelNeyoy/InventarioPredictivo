@@ -2,8 +2,8 @@ import flet as ft
 
 def main(page: ft.Page):
 
-    page.title = ""
-    page.bgcolor = ""
+    page.title = "Inventario Predictivo"
+    page.bgcolor = "#65F7DB"
 
     # Columna Lateral Izquierda
     columnaLateral = ft.Container(
@@ -12,11 +12,11 @@ def main(page: ft.Page):
         padding=20,
         content=ft.Column(
             controls=[
-                ft.Text("Predicciones", size=20, weight="bold"),
+                ft.Text("Predicciones", size=20, weight="bold", color = ft.Colors.BLUE),
 
                 ft.Divider(),
 
-                ft.Container(expand=True),
+                ft.Container(expand = True),
             ]
         )
     )
@@ -24,15 +24,15 @@ def main(page: ft.Page):
     
     #Boton para subir archivo .csv
     botonCSV = ft.Container(
-        bgcolor="white",
-        padding=15,
-        content=ft.Row(
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        bgcolor = "white",
+        padding = 15,
+        content = ft.Row(
+            alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
             controls = [ 
                 
                 ft.Row(
                     controls = [
-                        ft.Button("Subir Archivo .csv")
+                        ft.Button("Subir Archivo .csv", color = "white", bgcolor = "#6588F7")
                     ]
                 )
             ]
@@ -42,21 +42,21 @@ def main(page: ft.Page):
     #Tabla que visualiza el archivo .csv
     tablaInventario = ft.DataTable(
         columns = [
-            ft.DataColumn( ft.Text("Articulo") ),
-            ft.DataColumn( ft.Text("Categoria") ),
-            ft.DataColumn( ft.Text("Precio") ),
-            ft.DataColumn( ft.Text("Stock") )
+            ft.DataColumn( ft.Text("Articulo",color = "black") ),
+            ft.DataColumn( ft.Text("Categoria", color = "black") ),
+            ft.DataColumn( ft.Text("Precio", color = "black") ),
+            ft.DataColumn( ft.Text("Stock", color = "black") )
         ]
     )
     
-    #Sire para añadir el diseño que tendra la tabla
+    #Sirve para añadir el diseño que tendra la tabla
     diseñoTablaInventario = ft.Container(
-        bgcolor= "",
+        bgcolor= "white",
         padding= 20,
-        border_radius= 100,
+        border_radius= 50,
         content = ft.Column(
             controls = [
-                ft.Text("Inventario"),
+                ft.Text("Inventario", color = "black"),
                 tablaInventario
             ]
         )
@@ -78,8 +78,8 @@ def main(page: ft.Page):
                             controls = [
                                 ft.Column(
                                     controls = [
-                                        ft.Text("Gestor de Inventario Predictivo"),
-                                        ft.Text("Bienvenido a tu gestor de invenatrio reatil.\nPuedes revisar tu inventario u tener una prediccion del mismo.")
+                                        ft.Text("Gestor de Inventario Predictivo", color = ft.Colors.BLUE),
+                                        ft.Text("Bienvenido a tu gestor de invenatrio reatil.\nPuedes revisar tu inventario u tener una prediccion del mismo.", color= "black")
                                     ]
                                 )
                             ]
