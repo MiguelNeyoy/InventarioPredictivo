@@ -1,7 +1,19 @@
 import flet as ft
-import csv as cv #  <-- Esta libreria permite leer los arvhicos csv.
+import csv #  <-- Esta libreria permite leer los arvhicos csv.
 
 def main(page: ft.Page):
+    
+    '''
+    carpeta = ft.FilePicker()
+    page.overlay.append(carpeta)
+    
+    #Funcion para abrir el Explorardor de Archivos de Windows
+    async def abrirExploradorDeArchivos(e):
+        await carpeta.pick_files(
+            allow_multiple=False,
+            allowed_extensions= ["csv"]
+        )
+    '''
     
     # 1. Configuración principal de la página
     page.title = "Gestor de Inventario Predictivo"
@@ -46,6 +58,24 @@ def main(page: ft.Page):
     )
     
     # 4. Tabla de Inventario
+    '''
+    filas = []
+    
+    with open('datosCSV.csv', 'r', encoding="utf-8") as inventario:
+        columna = csv.reader(inventario)
+    
+        for fila in columna:
+            filas.append(
+                ft.DataRow(
+                    cells = [
+                        ft.DataCell(ft.Text( fila[0] )),
+                        ft.DataCell(ft.Text( fila[1] )),
+                        ft.DataCell(ft.Text( fila[2] )),
+                        ft.DataCell(ft.Text( fila[3] ))
+                    ]
+                )
+            )    
+    '''
     tabla_inventario = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Producto", weight=ft.FontWeight.BOLD)),
@@ -53,13 +83,8 @@ def main(page: ft.Page):
             ft.DataColumn(ft.Text("Precio ($)", weight=ft.FontWeight.BOLD)),
             ft.DataColumn(ft.Text("Stock Actual", weight=ft.FontWeight.BOLD), numeric=True)
         ],
-        rows=[
-            ft.DataRow(cells=[ft.DataCell(ft.Text("AMD Ryzen 5 5600X")), ft.DataCell(ft.Text("Procesador")), ft.DataCell(ft.Text("3200")), ft.DataCell(ft.Text("20"))]),
-            ft.DataRow(cells=[ft.DataCell(ft.Text("AMD Ryzen 7 5800X3D")), ft.DataCell(ft.Text("Procesador")), ft.DataCell(ft.Text("5464")), ft.DataCell(ft.Text("17"))]),
-            ft.DataRow(cells=[ft.DataCell(ft.Text("Corsair Vengeance 16GB")), ft.DataCell(ft.Text("Memoria RAM")), ft.DataCell(ft.Text("847")), ft.DataCell(ft.Text("29"))]),
-            ft.DataRow(cells=[ft.DataCell(ft.Text("Corsair RM750x 750W")), ft.DataCell(ft.Text("Fuente de Poder")), ft.DataCell(ft.Text("1674")), ft.DataCell(ft.Text("11"))]),
-            ft.DataRow(cells=[ft.DataCell(ft.Text("NVIDIA RTX 4060")), ft.DataCell(ft.Text("Tarjeta Gráfica")), ft.DataCell(ft.Text("7487")), ft.DataCell(ft.Text("10"))]),
-        ],
+        rows= [],
+        
         border=ft.Border.all(1, ft.Colors.GREY_200),
         border_radius=5,
         heading_row_color=ft.Colors.GREY_50,
@@ -92,4 +117,4 @@ def main(page: ft.Page):
         cuerpo_dashboard
     )
 
-ft.run(main)
+ft.run( main )
