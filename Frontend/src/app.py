@@ -1,4 +1,5 @@
 import flet as ft
+import csv as cv #  <-- Esta libreria permite leer los arvhicos csv.
 
 def main(page: ft.Page):
     
@@ -23,15 +24,15 @@ def main(page: ft.Page):
     menu_botones = ft.Column(
         controls=[
             ft.Text("Categorías", weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_GREY_700),
-            ft.ElevatedButton("Procesadores", icon=ft.Icons.MEMORY, width=200, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8))),
-            ft.ElevatedButton("Memorias RAM", icon=ft.Icons.MEMORY, width=200, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8))),
-            ft.ElevatedButton("Fuentes de Poder", icon=ft.Icons.POWER, width=200, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8))),
-            ft.ElevatedButton("Tarjetas Gráficas", icon=ft.Icons.MONITOR, width=200, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8))),
+            ft.Button("Procesadores", icon=ft.Icons.MEMORY, width=200, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8))),
+            ft.Button("Memorias RAM", icon=ft.Icons.MEMORY, width=200, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8))),
+            ft.Button("Fuentes de Poder", icon=ft.Icons.POWER, width=200, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8))),
+            ft.Button("Tarjetas Gráficas", icon=ft.Icons.MONITOR, width=200, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8))),
             
             ft.Divider(height=30), 
             
             ft.Text("Inteligencia Artificial", weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_GREY_700),
-            ft.ElevatedButton("Predecir Demanda", icon=ft.Icons.AUTO_GRAPH, width=200, bgcolor=ft.Colors.BLUE_700, color=ft.Colors.WHITE),
+            ft.Button("Predecir Demanda", icon=ft.Icons.AUTO_GRAPH, width=200, bgcolor=ft.Colors.BLUE_700, color=ft.Colors.WHITE),
         ],
         spacing=15,
     )
