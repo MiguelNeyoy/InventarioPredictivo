@@ -8,6 +8,21 @@ def main(page: ft.Page):
     page.padding = 20
     page.theme_mode = ft.ThemeMode.LIGHT 
 
+    #Abre el explorador de archivos:
+    async def abrir_explorador_archivos(e: ft.Event[ft.Button]):
+            archivo = await ft.FilePicker().pick_files(allow_multiple=True)
+            archivo_seleccionado.value = (
+                ", ".join(map(lambda f: f.name, archivo)) if archivo else "No se subio ningun archivo"
+            )
+            
+        
+            #archivo_seleccionado.update()
+    
+    #file_picker_archivo = ft.FilePicker()
+    
+    
+    #page.overlay.append(file_picker_archivo)
+        
     # 2. Encabezado (Título y Descripción)
     header = ft.Row(
         controls=[
@@ -24,7 +39,15 @@ def main(page: ft.Page):
         controls=[
             
             ft.Text("Inteligencia Artificial", weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_GREY_700),
-            ft.Button("Predecir Demanda", icon=ft.Icons.UPLOAD_FILE_OUTLINED, width=200, bgcolor=ft.Colors.BLUE_700, color=ft.Colors.WHITE),
+            ft.Button(
+                "Predecir Demanda",
+                icon=ft.Icons.UPLOAD_FILE_OUTLINED, 
+                on_click = abrir_explorador_archivos,
+                width=200, 
+                bgcolor=ft.Colors.BLUE_700, 
+                color=ft.Colors.WHITE
+                ),
+            archivo_seleccionado := ft.Text()
         ],
         spacing=15,
     )
