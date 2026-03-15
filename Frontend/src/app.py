@@ -14,14 +14,6 @@ def main(page: ft.Page):
             archivo_seleccionado.value = (
                 ", ".join(map(lambda f: f.name, archivo)) if archivo else "No se subio ningun archivo"
             )
-            
-        
-            #archivo_seleccionado.update()
-    
-    #file_picker_archivo = ft.FilePicker()
-    
-    
-    #page.overlay.append(file_picker_archivo)
         
     # 2. Encabezado (Título y Descripción)
     header = ft.Row(
