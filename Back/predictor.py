@@ -26,10 +26,10 @@ class MotorInventario:
             2: Recibe el Excel sucio y lo prepara para Prophet.
         """
         print("Limpiando datos y formateando columnas...")
-        # 1. Eliminar filas vacías
+        # Eliminar filas vacías
         df_limpio = df_crudo.dropna().copy()
         
-        # 2. Renombrar columnas a lo que Prophet exige (ds y y)
+        # Renombrar columnas a lo que Prophet exige (ds y y)
         # Asumimos que el Excel original tiene columnas 'Fecha', 'Producto', 'Ventas'
         df_limpio = df_limpio.rename(columns={
             'Fecha': 'ds', 
@@ -43,7 +43,7 @@ class MotorInventario:
 
     def generar_prediccion(self, df_limpio, dias_a_predecir):
         """
-         4: El Bucle Mágico que predice artículo por artículo.
+         El Bucle Mágico que predice artículo por artículo.
         """
         print(f"Generando pronóstico para los próximos {dias_a_predecir} días...")
         resultados = []
@@ -74,7 +74,7 @@ class MotorInventario:
 
     def evaluar_stock(self, df_predicciones, stock_actual_dict):
         """
-        7: Motor de reglas de negocio para emitir alertas.
+        Motor de reglas de negocio para emitir alertas.
         """
         print("Evaluando inventario contra predicciones...")
         alertas = []
