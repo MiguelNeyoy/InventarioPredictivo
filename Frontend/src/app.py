@@ -7,6 +7,7 @@ import pandas as pd
 # Adicionando el directorio raíz del proyecto al path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from Back.predictor import MotorInventario
+from reportes import crear_vista_reportes
 
 def main(page: ft.Page):
     
@@ -113,6 +114,21 @@ def main(page: ft.Page):
         ink=True
     )
 
+    # Funciones de navegación
+    def mostrar_panel(e):
+        for control in sidebar_content.controls:
+            if isinstance(control, ft.ListTile):
+                control.selected = (control.title.value == "Panel de Control")
+        contenedor_derecho.content = columna_principal
+        page.update()
+
+    def mostrar_reportes(e):
+        for control in sidebar_content.controls:
+            if isinstance(control, ft.ListTile):
+                control.selected = (control.title.value == "Reportes")
+        contenedor_derecho.content = crear_vista_reportes(page)
+        page.update()
+
     # Menú Lateral (Sidebar)
     sidebar_content = ft.Column(
         controls=[
@@ -124,8 +140,8 @@ def main(page: ft.Page):
                 padding=ft.Padding(top=0, right=0, bottom=20, left=0)
             ),
             ft.Text("MENÚ PRINCIPAL", size=12, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_GREY_400),
-            ft.ListTile(leading=ft.Icon(ft.Icons.DASHBOARD), title=ft.Text("Panel de Control"), selected=True, on_click=lambda e: None),
-            ft.ListTile(leading=ft.Icon(ft.Icons.ANALYTICS), title=ft.Text("Reportes"), on_click=lambda e: None),
+            ft.ListTile(leading=ft.Icon(ft.Icons.DASHBOARD), title=ft.Text("Panel de Control"), selected=True, on_click=mostrar_panel),
+            ft.ListTile(leading=ft.Icon(ft.Icons.ANALYTICS), title=ft.Text("Reportes"), on_click=mostrar_reportes),
             ft.ListTile(leading=ft.Icon(ft.Icons.COMPARE_ARROWS), title=ft.Text("Comparaciones"), on_click=lambda e: None),
             ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS), title=ft.Text("Configuración"), on_click=lambda e: None),
             ft.Divider(height=20),
@@ -203,10 +219,12 @@ def main(page: ft.Page):
         scroll=ft.ScrollMode.AUTO
     )
 
+    contenedor_derecho = ft.Container(content=columna_principal, padding=30, expand=True)
+
     cuerpo_dashboard = ft.Row(
         controls=[
             sidebar,
-            ft.Container(content=columna_principal, padding=30, expand=True)
+            contenedor_derecho
         ],
         expand=True,
         spacing=0
