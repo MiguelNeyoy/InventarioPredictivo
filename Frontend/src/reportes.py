@@ -22,9 +22,8 @@ def crear_vista_reportes(page: ft.Page):
             ]),
             ft.Container(
                 content=ft.Row([
-                    ft.ElevatedButton("MENSUAL", color=primary, bgcolor=ft.Colors.WHITE, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=6))),
-                    ft.TextButton("TRIMESTRAL", style=ft.ButtonStyle(color=secondary)),
-                    ft.TextButton("ANUAL", style=ft.ButtonStyle(color=secondary)),
+                    ft.ElevatedButton("SEMANAL", color=primary, bgcolor=ft.Colors.WHITE, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=6))),
+                    ft.TextButton("MENSUAL", style=ft.ButtonStyle(color=secondary)),
                 ], spacing=0),
                 bgcolor="#f2f3ff",
                 border_radius=8,
@@ -33,8 +32,10 @@ def crear_vista_reportes(page: ft.Page):
             )
         ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.END),
         margin=ft.margin.only(bottom=20)
-    )
+    )#Fin-encabezado
 
+    
+    
     # Tarjetas KPI
     def crear_kpi_card(titulo, valor, porcentaje, icono, es_positivo):
         color_porcentaje = ft.Colors.GREEN_600 if es_positivo else ft.Colors.RED_500
@@ -57,13 +58,11 @@ def crear_vista_reportes(page: ft.Page):
             bgcolor=ft.Colors.WHITE, padding=20, border_radius=12, border=ft.border.all(1, card_border),
             shadow=ft.BoxShadow(blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)),
             expand=True
-        )
+        )#fin-crear_kpi_card
 
     kpis = ft.Row([
         crear_kpi_card("ARTÍCULOS ANALIZADOS", "245,680", "+12.5%", ft.Icons.INVENTORY_2, True),
         crear_kpi_card("ACERTIVIDAD DEL MODELO", "94.8%", "+4.2%", ft.Icons.VERIFIED, True),
-        crear_kpi_card("PRECISIÓN DEL MODELO", "2.5 uds", "Estable", ft.Icons.TRACK_CHANGES, True),
-        crear_kpi_card("VOLUMEN DE TRANSACCIONES", "14,820", "-1.2%", ft.Icons.RECEIPT_LONG, False),
     ], spacing=20)
 
     # Gráfica Principal: Tendencias de Ventas (Guardando Matplotlib image localmente)
@@ -93,6 +92,7 @@ def crear_vista_reportes(page: ft.Page):
         plt.savefig(filepath, format='png', dpi=100, bbox_inches='tight')
         plt.close(fig)
         return filepath
+    #fin-generar_graficos_lineas
 
     tendencias_chart = ft.Container(
         content=ft.Column([
@@ -107,6 +107,7 @@ def crear_vista_reportes(page: ft.Page):
         margin=ft.margin.only(top=20, bottom=20)   
     )
 
+
     # Gráficas Secundarias: Top Productos
     def crear_barra_producto(nombre, monto, porcentaje_ancho):
         return ft.Column([
@@ -116,7 +117,9 @@ def crear_vista_reportes(page: ft.Page):
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             ft.ProgressBar(value=porcentaje_ancho, color=primary, bgcolor="#eaedff", height=10, border_radius=5)
         ], spacing=5)
-
+    #fin-crear_barra_productos
+    
+    
     top_productos = ft.Container(
         content=ft.Column([
             ft.Row([
@@ -175,7 +178,8 @@ def crear_vista_reportes(page: ft.Page):
         ]),
         bgcolor=ft.Colors.WHITE, padding=30, border_radius=12, border=ft.border.all(1, card_border),
         shadow=ft.BoxShadow(blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)),
-    )
+    )#fin-tabla_reportes
+
 
     # Contenedor padre general (scrollable)
     contenido_principal = ft.Column([
