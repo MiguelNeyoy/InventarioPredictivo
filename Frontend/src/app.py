@@ -142,8 +142,6 @@ def main(page: ft.Page):
             ft.Text("MENÚ PRINCIPAL", size=12, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_GREY_400),
             ft.ListTile(leading=ft.Icon(ft.Icons.DASHBOARD), title=ft.Text("Panel de Control"), selected=True, on_click=mostrar_panel),
             ft.ListTile(leading=ft.Icon(ft.Icons.ANALYTICS), title=ft.Text("Reportes"), on_click=mostrar_reportes),
-            ft.ListTile(leading=ft.Icon(ft.Icons.COMPARE_ARROWS), title=ft.Text("Comparaciones"), on_click=lambda e: None),
-            ft.ListTile(leading=ft.Icon(ft.Icons.SETTINGS), title=ft.Text("Configuración"), on_click=lambda e: None),
             ft.Divider(height=20),
             ft.Container(expand=True),
         ],
