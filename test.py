@@ -7,10 +7,23 @@ print("=== INICIANDO PRUEBA DEL FLUJO BACKEND MODULARIZADO ===\n")
 
 # Simulamos lo que haría el controlador (por ejemplo FastApi o Flask) o Frontend
 try:
-    df_crudo = pd.read_csv("ventas_totales.csv")
-    print("Archivo CSV cargado correctamente (Simulación de entrada cruda).")
-except FileNotFoundError:
-    print("Error: No encuentro el CSV.")
+    import kagglehub
+    from kagglehub import KaggleDatasetAdapter
+
+    print("Descargando/Cargando dataset de Kaggle...")
+    # Load the latest version
+    df_crudo = kagglehub.load_dataset(
+        KaggleDatasetAdapter.PANDAS,
+        "huzdaria/laptop-pricing",
+        ""
+    )
+    print("Dataset de Kaggle cargado correctamente (Simulación de entrada cruda).")
+    print("Primeros registros:\n", df_crudo.head())
+except ImportError:
+    print("Error: Falta la librería 'kagglehub'. Por favor ejecuta: pip install kagglehub[pandas-datasets]")
+    exit()
+except Exception as e:
+    print(f"Error al cargar el dataset de Kaggle: {e}")
     exit()
 
 # 1. VALIDACION
@@ -31,11 +44,11 @@ mi_motor = MotorInventario()
 df_resultados = mi_motor.generar_prediccion(df_limpio, dias_a_predecir=15)
 
 # Simulamos un diccionario de stock actual (lo que habría en la bodega hoy)
-stock_falso = {
-    "Cerveza Pacifico": 50000,  # Tenemos mucha, no debería pedir
-    "Bloqueador Solar": 10,     # Tenemos poco, debería alertar
-    "Hielo en Bolsa": 0         # No tenemos nada, alerta crítica
-}
+# stock_falso = {
+#     "Cerveza Pacifico": 50000,  # Tenemos mucha, no debería pedir
+#     "Bloqueador Solar": 10,     # Tenemos poco, debería alertar
+#     "Hielo en Bolsa": 0         # No tenemos nada, alerta crítica
+# }
 
 # 3. REGLAS DE NEGOCIO
 print("\n--- Fase 3: Evaluación de Inventario (Reglas de Negocio) ---")
