@@ -1,65 +1,82 @@
 import pandas as pd
 import numpy as np
 
-print("Iniciando la simulación de datos de ventas...")
+print("Iniciando la simulación de datos de ventas de tecnología (3 años)...")
 
-#  Definimos el periodo de tiempo (2 años de historia hasta el día de hoy)
-fechas = pd.date_range(start="2024-01-01", end="2026-02-27")
+# Definimos el periodo de tiempo: 3 años de historia hasta hoy (Abril 2023 - Abril 2026)
+fechas = pd.date_range(start="2023-04-01", end="2026-04-12")
 
-# Elegimos productos realistas para la costa
-productos = ["Cerveza Pacifico", "Bloqueador Solar", "Hielo en Bolsa"]
+# Elegimos productos reales de hardware/cómputo
+productos = [
+    "Laptop Dell Inspiron", 
+    "Procesador Ryzen 5", 
+    "Memoria RAM 16GB", 
+    "Tarjeta Gráfica RTX 4060",
+    "Monitor 24 pulgadas"
+]
 
-# Aquí guardaremos todos los registros antes de hacer el Excel
 registros_ventas = []
 
-# Simulamos las ventas día por día, producto por producto
 for producto in productos:
     
-    # Cada producto tiene una venta base diferente
-    if producto == "Cerveza Pacifico":
-        venta_base = 80
-    elif producto == "Bloqueador Solar":
-        venta_base = 30
-    else:
-        venta_base = 50
+    # Volumen realista: se venden más memorias RAM que tarjetas gráficas
+    if producto == "Memoria RAM 16GB":
+        venta_base = 15
+    elif producto == "Procesador Ryzen 5":
+        venta_base = 8
+    elif producto == "Monitor 24 pulgadas":
+        venta_base = 6
+    elif producto == "Laptop Dell Inspiron":
+        venta_base = 4
+    elif producto == "Tarjeta Gráfica RTX 4060":
+        venta_base = 2
 
     for fecha in fechas:
-        # A) Añadimos ruido aleatorio (las ventas nunca son exactamente iguales)
-        venta_del_dia = venta_base + np.random.randint(-15, 20)
+        # A) Ruido aleatorio (variación diaria normal)
+        venta_del_dia = venta_base + np.random.randint(-2, 4)
         
-        # B) Efecto Fin de Semana (Viernes, Sábado y Domingo se vende más)
-        if fecha.weekday() >= 4: # 4 es Viernes, 5 Sábado, 6 Domingo
-            venta_del_dia += 40
+        # B) Efecto Fin de Semana (Viernes y Sábado hay un ligero aumento en retail)
+        if fecha.weekday() in [4, 5]: 
+            venta_del_dia += 3
             
-        # C) Efecto Carnaval (Picos masivos a finales de febrero)
-        if fecha.month == 2 and 15 <= fecha.day <= 25:
-            venta_del_dia += 120
+        # C) Efecto Regreso a Clases (Agosto 15 - Septiembre 5)
+        # Impacta muchísimo más a Laptops y Monitores
+        if (fecha.month == 8 and fecha.day >= 15) or (fecha.month == 9 and fecha.day <= 5):
+            if "Laptop" in producto or "Monitor" in producto:
+                venta_del_dia += 12
+            else:
+                venta_del_dia += 3
             
-        # D) Efecto Semana Santa (Picos masivos en abril)
-        if fecha.month == 4 and 1 <= fecha.day <= 15:
-            venta_del_dia += 150
+        # D) Efecto Buen Fin / Black Friday (Segunda quincena de Noviembre)
+        # Explosión de ventas en componentes caros (Procesadores, Gráficas)
+        if fecha.month == 11 and 15 <= fecha.day <= 30:
+            venta_del_dia += 25
             
-        # Asegurarnos de que no existan ventas negativas por el ruido aleatorio
+        # E) Efecto Navidad (Diciembre 10 al 24)
+        if fecha.month == 12 and 10 <= fecha.day <= 24:
+            venta_del_dia += 15
+            
+        # Evitar ventas negativas por el ruido
         venta_del_dia = max(0, venta_del_dia)
         
-        # Guardamos la fila
+        # Guardamos la fila respetando el esquema estricto (Fecha, Producto, Cantidad)
         registros_ventas.append({
             "Fecha": fecha.strftime("%Y-%m-%d"),
             "Producto": producto,
-            "Ventas": venta_del_dia
+            "Cantidad": venta_del_dia
         })
 
-#  Convertimos la lista en una tabla (DataFrame)
+# Convertimos a DataFrame
 df_maestro = pd.DataFrame(registros_ventas)
 
-#  EL TOQUE DE REALIDAD: Mezclamos las filas aleatoriamente
-# Esto simula un registro real donde la gente compra a distintas horas
+# Mezclamos las filas aleatoriamente para simular un registro transaccional real
 df_maestro = df_maestro.sample(frac=1).reset_index(drop=True)
 
-#  Exportamos a CSV
-df_maestro.to_csv("ventas_totales.csv", index=False)
+# Exportamos a CSV
+nombre_archivo = "historico_maestro.csv"
+df_maestro.to_csv(nombre_archivo, index=False)
 
-print("¡Éxito! Archivo 'ventas_totales.csv' generado correctamente.")
+print(f"¡Éxito! Archivo '{nombre_archivo}' generado correctamente.")
 print(f"Total de registros simulados: {len(df_maestro)}")
-print("\nPrimeras 5 filas del archivo revuelto:")
+print("\nPrimeras 5 filas del archivo generado:")
 print(df_maestro.head())
