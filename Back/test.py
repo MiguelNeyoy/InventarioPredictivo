@@ -64,7 +64,7 @@ stock_falso = {
 # 3. REGLAS DE NEGOCIO
 print("\n--- Fase 3: Evaluación de Inventario (Reglas de Negocio) ---")
 logica = LogicaNegocio()
-df_alertas = logica.evaluar_stock(df_resultados, stock_falso)
+df_alertas = logica.evaluar_stock(df_resultados, stock_falso, porcentaje_seguridad=15)
 
 print("\n=== RESULTADO FINAL QUE SE ENVIARÁ A FLET / FRONTEND === ")
 # Imprimimos la tabla final bonita en la consola
