@@ -5,6 +5,15 @@ from reglas_negocio import LogicaNegocio
 
 print("=== INICIANDO PRUEBA DEL FLUJO BACKEND MODULARIZADO ===\n")
 
+# 0. CARGA DE DATOS
+print("\n--- Fase 0: Cargando datos del histórico ---")
+df_crudo = pd.read_csv('historico_maestro.csv')
+print(f"✓ Datos cargados: {len(df_crudo)} registros")
+print(f"Columnas: {df_crudo.columns.tolist()}")
+
+# Para las pruebas, utilizaremos un stock falso
+stock_falso = 10
+
 # 1. VALIDACION
 print("\n--- Fase 1: Validación y Limpieza ---")
 validador = ValidadorDatos()

@@ -27,7 +27,11 @@ class LogicaNegocio:
             articulo = fila["Producto"]
             estimado = fila["Venta_Estimada"]
 
-            stock_real = stock_actual_dict.get(articulo, 0)
+            stock_real = (
+                stock_actual_dict.get(articulo, 0)
+                if isinstance(stock_actual_dict, dict)
+                else stock_actual_dict
+            )
 
             necesario = estimado * (1 + self.umbral_seguridad)
 
