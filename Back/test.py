@@ -5,14 +5,26 @@ from reglas_negocio import LogicaNegocio
 
 print("=== INICIANDO PRUEBA DEL FLUJO BACKEND MODULARIZADO ===\n")
 
-# 0. CARGA DE DATOS
-print("\n--- Fase 0: Cargando datos del histórico ---")
-df_crudo = pd.read_csv('historico_maestro.csv')
-print(f"✓ Datos cargados: {len(df_crudo)} registros")
-print(f"Columnas: {df_crudo.columns.tolist()}")
+# Simulamos lo que haría el controlador (por ejemplo FastApi o Flask) o Frontend
+try:
+    import kagglehub
+    from kagglehub import KaggleDatasetAdapter
 
-# Para las pruebas, utilizaremos un stock falso
-stock_falso = 10
+    print("Descargando/Cargando dataset de Kaggle...")
+    # Load the latest version
+    df_crudo = kagglehub.load_dataset(
+        KaggleDatasetAdapter.PANDAS,
+        "huzdaria/laptop-pricing",
+        ""
+    )
+    print("Dataset de Kaggle cargado correctamente (Simulación de entrada cruda).")
+    print("Primeros registros:\n", df_crudo.head())
+except ImportError:
+    print("Error: Falta la librería 'kagglehub'. Por favor ejecuta: pip install kagglehub[pandas-datasets]")
+    exit()
+except Exception as e:
+    print(f"Error al cargar el dataset de Kaggle: {e}")
+    exit()
 
 # 1. VALIDACION
 print("\n--- Fase 1: Validación y Limpieza ---")
@@ -30,6 +42,13 @@ print("\n--- Fase 2: Motor Predictivo ---")
 mi_motor = MotorInventario()
 # Le pedimos predecir 15 días. Esto tomará unos segundos porque entrenará la IA.
 df_resultados = mi_motor.generar_prediccion(df_limpio, dias_a_predecir=15)
+
+# Simulamos un diccionario de stock actual (lo que habría en la bodega hoy)
+# stock_falso = {
+#     "Cerveza Pacifico": 50000,  # Tenemos mucha, no debería pedir
+#     "Bloqueador Solar": 10,     # Tenemos poco, debería alertar
+#     "Hielo en Bolsa": 0         # No tenemos nada, alerta crítica
+# }
 
 # 3. REGLAS DE NEGOCIO
 print("\n--- Fase 3: Evaluación de Inventario (Reglas de Negocio) ---")

@@ -1,56 +1,42 @@
 import pandas as pd
 
-
 class LogicaNegocio:
     """
     Contiene las reglas de negocio sobre alertas de inventario.
     """
-
-    def __init__(self, umbral_seguridad=0.0):
-        self.umbral_seguridad = umbral_seguridad
 
     def evaluar_stock(self, df_predicciones, stock_actual_dict):
         """
         Motor de reglas de negocio para emitir alertas.
         df_predicciones: DataFrame con ["Producto", "Venta_Estimada"]
         stock_actual_dict: Diccionario en forma de {"Producto": CantidadReal}
-        umbral_seguridad: Porcentaje extra de colchón (0.0 = sin margen, 0.15 = 15% extra)
         """
         print("Evaluando inventario contra predicciones (Logica de Negocio)...")
-
-        if self.umbral_seguridad > 0:
-            print(f"Con margen de seguridad aplicado: {self.umbral_seguridad * 100}%")
-
         alertas = []
-
+        
+        # Recorremos la tabla de predicciones que genero el motor
         for index, fila in df_predicciones.iterrows():
-            articulo = fila["Producto"]
-            estimado = fila["Venta_Estimada"]
-
-            stock_real = (
-                stock_actual_dict.get(articulo, 0)
-                if isinstance(stock_actual_dict, dict)
-                else stock_actual_dict
-            )
-
-            necesario = estimado * (1 + self.umbral_seguridad)
-
-            if stock_real < necesario:
+            articulo = fila['Producto']
+            estimado = fila['Venta_Estimada']
+            
+            # Buscamos cuánto stock tenemos en la vida real de este artículo
+            # Si no nos pasan el dato, asumimos 0
+            stock_real = stock_actual_dict.get(articulo, 0)
+            
+            # LA LÓGICA DE NEGOCIO ORIGINAL
+            if estimado > stock_real:
                 estado_alerta = True
-                cantidad_a_comprar = round(necesario - stock_real)
+                cantidad_a_comprar = estimado - stock_real
             else:
                 estado_alerta = False
                 cantidad_a_comprar = 0
-
-            alertas.append(
-                {
-                    "Producto": articulo,
-                    "Venta_Estimada": estimado,
-                    "Stock_Actual": stock_real,
-                    "Cantidad_A_Comprar": cantidad_a_comprar,
-                    "Alerta_Surtir": estado_alerta,
-                    "Colchon_Aplicado": f"{self.umbral_seguridad * 100}%",
-                }
-            )
-
+                
+            alertas.append({
+                "Producto": articulo,
+                "Venta_Estimada": estimado,
+                "Stock_Actual": stock_real,
+                "Cantidad_A_Comprar": cantidad_a_comprar,
+                "Alerta_Surtir": estado_alerta
+            })
+            
         return pd.DataFrame(alertas)
