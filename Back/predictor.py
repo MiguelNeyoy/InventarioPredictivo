@@ -4,11 +4,14 @@ from prophet import Prophet
 class MotorInventario:
     """
     Motor predictivo de inventario utilizando Prophet.
-    Recibe un DataFrame ya validado y listo, para generar pronosticos.
+    Carga el histórico maestro y genera pronósticos para periodos específicos.
     """
 
     def __init__(self):
         print("Iniciando Motor de IA para Inventario...")
+        # Cargar datos históricos
+        self.df_historico = pd.read_csv('historico_maestro.csv')
+        self.df_historico['Ventas'] = self.df_historico['Cantidad']  # Renombrar para consistencia
         # Aquí configuramos los días festivos locales 
         # Esto le dirá a la IA que espere picos de venta en estas fechas
         feriados_mazatlan = pd.DataFrame({
@@ -21,26 +24,26 @@ class MotorInventario:
         })
         self.feriados = feriados_mazatlan
 
-    def generar_prediccion(self, df_limpio, dias_a_predecir):
+    def generar_prediccion(self, start_date, end_date):
         """
-        El Bucle Mágico que predice artículo por artículo.
-        Espera que df_limpio ya tenga las columnas 'ds', 'Producto', y 'y'.
+        Genera pronóstico para un periodo específico usando los datos históricos.
         """
-        print(f"Generando pronóstico para los próximos {dias_a_predecir} días...")
+        print(f"Generando pronóstico desde {start_date} hasta {end_date}...")
         resultados = []
-        lista_productos = df_limpio['Producto'].unique()
+        lista_productos = self.df_historico['Producto'].unique()
         
         for articulo in lista_productos:
-           
-            df_filtrado = df_limpio[df_limpio['Producto'] == articulo]
+            df_filtrado = self.df_historico[self.df_historico['Producto'] == articulo].copy()
+            df_filtrado['ds'] = pd.to_datetime(df_filtrado['Fecha'])
+            df_filtrado['y'] = df_filtrado['Ventas']
             
             modelo = Prophet(holidays=self.feriados)
             modelo.fit(df_filtrado[['ds', 'y']])
             
-            futuro = modelo.make_future_dataframe(periods=dias_a_predecir, freq='D')
+            futuro = pd.DataFrame({'ds': pd.date_range(start=start_date, end=end_date, freq='D')})
             prediccion = modelo.predict(futuro)
             
-            total_estimado = prediccion['yhat'].tail(dias_a_predecir).sum()
+            total_estimado = prediccion['yhat'].sum()
             
             resultados.append({
                 "Producto": articulo,
