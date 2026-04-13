@@ -5,27 +5,6 @@ from reglas_negocio import LogicaNegocio
 
 print("=== INICIANDO PRUEBA DEL FLUJO BACKEND MODULARIZADO ===\n")
 
-# Simulamos lo que haría el controlador (por ejemplo FastApi o Flask) o Frontend
-try:
-    import kagglehub
-    from kagglehub import KaggleDatasetAdapter
-
-    print("Descargando/Cargando dataset de Kaggle...")
-    # Load the latest version
-    df_crudo = kagglehub.load_dataset(
-        KaggleDatasetAdapter.PANDAS,
-        "huzdaria/laptop-pricing",
-        ""
-    )
-    print("Dataset de Kaggle cargado correctamente (Simulación de entrada cruda).")
-    print("Primeros registros:\n", df_crudo.head())
-except ImportError:
-    print("Error: Falta la librería 'kagglehub'. Por favor ejecuta: pip install kagglehub[pandas-datasets]")
-    exit()
-except Exception as e:
-    print(f"Error al cargar el dataset de Kaggle: {e}")
-    exit()
-
 # 1. VALIDACION
 print("\n--- Fase 1: Validación y Limpieza ---")
 validador = ValidadorDatos()
