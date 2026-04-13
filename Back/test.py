@@ -22,13 +22,6 @@ mi_motor = MotorInventario()
 # Le pedimos predecir 15 días. Esto tomará unos segundos porque entrenará la IA.
 df_resultados = mi_motor.generar_prediccion(df_limpio, dias_a_predecir=15)
 
-# Simulamos un diccionario de stock actual (lo que habría en la bodega hoy)
-# stock_falso = {
-#     "Cerveza Pacifico": 50000,  # Tenemos mucha, no debería pedir
-#     "Bloqueador Solar": 10,     # Tenemos poco, debería alertar
-#     "Hielo en Bolsa": 0         # No tenemos nada, alerta crítica
-# }
-
 # 3. REGLAS DE NEGOCIO
 print("\n--- Fase 3: Evaluación de Inventario (Reglas de Negocio) ---")
 logica = LogicaNegocio()
