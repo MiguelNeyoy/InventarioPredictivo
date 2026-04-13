@@ -52,6 +52,10 @@ comparacion["Diferencia"] = comparacion["Venta_Estimada"] - comparacion["Venta_R
 print("\nComparación Estimado vs Real:")
 print(comparacion)
 
+print("\n--- Métricas de Precisión (MAE / RMSE) ---")
+df_metricas = mi_motor.calcular_metricas(dias_test=15)
+print(df_metricas)
+
 # Simulamos un diccionario de stock actual (lo que habría en la bodega hoy)
 stock_falso = {
     "Laptop Dell Inspiron": 50,

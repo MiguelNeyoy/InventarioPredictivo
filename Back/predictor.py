@@ -1,5 +1,7 @@
 import pandas as pd
 from prophet import Prophet
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import numpy as np
 
 
 class MotorInventario:
@@ -63,6 +65,44 @@ class MotorInventario:
                         max(0, total_estimado)
                     ),  # max(0) evita ventas negativas
                 }
+            )
+
+        return pd.DataFrame(resultados)
+
+    def calcular_metricas(self, dias_test=15):
+        """
+        Calcula MAE y RMSE apartando los últimos dias_test para validación.
+        """
+        print(f"Calculando métricas de precisión ({dias_test} días de test)...")
+        resultados = []
+        lista_productos = self.df_historico["Producto"].unique()
+
+        for articulo in lista_productos:
+            df_articulo = self.df_historico[
+                self.df_historico["Producto"] == articulo
+            ].copy()
+            df_articulo = df_articulo.sort_values("ds")
+
+            if len(df_articulo) <= dias_test:
+                continue
+
+            df_entrenamiento = df_articulo.iloc[:-dias_test]
+            df_test = df_articulo.iloc[-dias_test:]
+
+            modelo = Prophet(holidays=self.feriados)
+            modelo.fit(df_entrenamiento[["ds", "y"]])
+
+            futuro = df_test[["ds"]]
+            prediccion = modelo.predict(futuro)
+
+            y_real = df_test["y"].values
+            y_predicho = prediccion["yhat"].values
+
+            mae = mean_absolute_error(y_real, y_predicho)
+            rmse = np.sqrt(mean_squared_error(y_real, y_predicho))
+
+            resultados.append(
+                {"Producto": articulo, "MAE": round(mae, 2), "RMSE": round(rmse, 2)}
             )
 
         return pd.DataFrame(resultados)
