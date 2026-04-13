@@ -1,7 +1,7 @@
 import pandas as pd
-from validador import ValidadorDatos
-from predictor import MotorInventario
-from reglas_negocio import LogicaNegocio
+from Back.validador import ValidadorDatos
+from Back.predictor import MotorInventario
+from Back.reglas_negocio import LogicaNegocio
 
 print("=== INICIANDO PRUEBA DEL FLUJO BACKEND MODULARIZADO ===\n")
 
