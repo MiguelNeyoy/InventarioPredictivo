@@ -340,29 +340,6 @@ def main(page: ft.Page):
             indicador_carga.visible = False
             page.update()
 
-            boton_subir_csv = ft.Container(
-                content=ft.Column(
-                    [
-                        ft.Icon(
-                            ft.Icons.UPLOAD_FILE, size=40, color=ft.Colors.BLUE_GREY_400
-                        ),
-                        ft.Text(
-                            "Cargar archivo de ventas",
-                            weight=ft.FontWeight.BOLD,
-                            color=ft.Colors.BLUE_GREY_700,
-                        ),
-                    ],
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                ),
-                padding=30,
-                border=ft.Border.all(2, ft.Colors.BLUE_GREY_200),
-                border_radius=10,
-                alignment=ft.Alignment.CENTER,
-                bgcolor=ft.Colors.WHITE,
-                on_click=abrir_dialogo_ventas,
-                ink=True,
-            )
-
     # Funciones de navegación
     def mostrar_panel(e):
         for control in sidebar_content.controls:
@@ -551,7 +528,6 @@ def main(page: ft.Page):
                                             ft.Text("Cargar Archivo de Ventas"),
                                         ]
                                     ),
-                                    icon=ft.Icons.UPLOAD_FILE,
                                     on_click=abrir_dialogo_ventas,
                                 ),
                                 texto_estado_ventas,
@@ -568,7 +544,6 @@ def main(page: ft.Page):
                                             ),
                                         ]
                                     ),
-                                    icon=ft.Icons.INVENTORY_2,
                                     color=ft.Colors.WHITE,
                                     bgcolor=ft.Colors.BLUE_600,
                                     on_click=abrir_dialogo_stock,

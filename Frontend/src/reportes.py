@@ -61,13 +61,24 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
 
         # Crear filas de la tabla de métricas
         filas_metricas = []
-        for _, row in ultima_metrica.iterrows():
+        if ultima_metrica is not None and len(ultima_metrica) > 0:
+            for _, row in ultima_metrica.iterrows():
+                filas_metricas.append(
+                    ft.DataRow(
+                        cells=[
+                            ft.DataCell(ft.Text(str(row["Producto"]), size=12)),
+                            ft.DataCell(ft.Text(str(row["MAE"])), size=12),
+                            ft.DataCell(ft.Text(str(row["RMSE"])), size=12),
+                        ]
+                    )
+                )
+        else:
             filas_metricas.append(
                 ft.DataRow(
                     cells=[
-                        ft.DataCell(ft.Text(str(row["Producto"]), size=12)),
-                        ft.DataCell(ft.Text(str(row["MAE"]), size=12)),
-                        ft.DataCell(ft.Text(str(row["RMSE"]), size=12)),
+                        ft.DataCell(ft.Text("No hay datos", color=secondary)),
+                        ft.DataCell(ft.Text("0", color=secondary)),
+                        ft.DataCell(ft.Text("0", color=secondary)),
                     ]
                 )
             )
@@ -237,13 +248,37 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
             expand=True,
         )  # fin-crear_kpi_card
 
+    # Determinar valores de KPI según datos disponibles
+    if ultima_prediccion is not None and len(ultima_prediccion) > 0:
+        num_articulos = str(len(ultima_prediccion))
+        texto_articulos = f"{num_articulos} análisis"
+
+        if ultima_metrica is not None and len(ultima_metrica) > 0:
+            # Calcular promedio de MAE
+            mae_promedio = ultima_metrica["MAE"].mean()
+            acertividad = max(0, min(100, 100 - (mae_promedio * 10)))
+            texto_acertividad = f"{acertividad:.1f}%"
+        else:
+            texto_acertividad = "Sin datos"
+    else:
+        texto_articulos = "0"
+        texto_acertividad = "Sin datos"
+
     kpis = ft.Row(
         [
             crear_kpi_card(
-                "ARTÍCULOS ANALIZADOS", "245,680", "+12.5%", ft.Icons.INVENTORY_2, True
+                "ARTÍCULOS ANALIZADOS",
+                texto_articulos,
+                "0%",
+                ft.Icons.INVENTORY_2,
+                True,
             ),
             crear_kpi_card(
-                "ACERTIVIDAD DEL MODELO", "94.8%", "+4.2%", ft.Icons.VERIFIED, True
+                "ACERTIVIDAD DEL MODELO",
+                texto_acertividad,
+                "0%",
+                ft.Icons.VERIFIED,
+                True,
             ),
         ],
         spacing=20,
