@@ -5,12 +5,14 @@ import flet as ft
 import pandas as pd
 from datetime import date, timedelta
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+_back_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "Back"))
+if _back_path not in sys.path:
+    sys.path.insert(0, _back_path)
 
-from Back.validador import ValidadorDatos
-from Back.predictor import MotorInventario
-from Back.reglas_negocio import LogicaNegocio
-from Back.exportador import ExportadorDatos
+from validador import ValidadorDatos
+from predictor import MotorInventario
+from reglas_negocio import LogicaNegocio
+from exportador import ExportadorDatos
 
 from components.sidebar import crear_sidebar
 from components.upload_panel import crear_upload_panel
@@ -166,6 +168,7 @@ def crear_vista_dashboard(page: ft.Page):
 
     def _procesar_prediccion_hilo(ruta_ventas, ruta_stock, dias_prediccion, umbral_seguridad):
         global ultima_prediccion, ultima_metrica
+        print(f"[DEBUG] Processing with ventas: {ruta_ventas}, stock: {ruta_stock}")
 
         try:
             indicador_carga.visible = True
@@ -176,12 +179,15 @@ def crear_vista_dashboard(page: ft.Page):
 
             validador = ValidadorDatos()
             df_ventas = pd.read_csv(ruta_ventas)
+            print(f"[DEBUG] Ventas columns: {list(df_ventas.columns)}")
             df_unificado, _ = validador.validar_y_limpiar(df_ventas)
 
             df_stock = pd.read_csv(ruta_stock)
-            if "Producto" not in df_stock.columns or "Stock" not in df_stock.columns:
-                raise ValueError("El archivo de stock debe tener columnas 'Producto' y 'Stock'")
-            stock_dict = dict(zip(df_stock["Producto"], df_stock["Stock"]))
+            print(f"[DEBUG] Stock columns: {list(df_stock.columns)}")
+            stock_col = "Stock" if "Stock" in df_stock.columns else "Stock_Actual"
+            if "Producto" not in df_stock.columns or stock_col not in df_stock.columns:
+                raise ValueError(f"El archivo de stock debe tener columnas 'Producto' y '{stock_col}'")
+            stock_dict = dict(zip(df_stock["Producto"], df_stock[stock_col]))
 
             motor = MotorInventario(df_unificado)
             fecha_inicio = date.today()
@@ -213,6 +219,7 @@ def crear_vista_dashboard(page: ft.Page):
         except Exception as ex:
             texto_estado.value = f"Error procesando el archivo: {str(ex)}"
             texto_estado.color = ft.Colors.RED_500
+            page.update()
         finally:
             indicador_carga.visible = False
             page.update()

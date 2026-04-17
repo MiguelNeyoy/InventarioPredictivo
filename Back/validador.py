@@ -12,7 +12,7 @@ class ValidadorDatos:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         csv_path = os.path.join(base_dir, "..", "ArchivosCVS", "historico_maestro.csv")
         self.df_historico = pd.read_csv(csv_path)
-        self.df_historico["Ventas"] = self.df_historico["Cantidad"]
+        # self.df_historico["Ventas"] = self.df_historico["Cantidad"]
         self.df_historico["ds"] = pd.to_datetime(self.df_historico["Fecha"])
         self.df_historico["y"] = self.df_historico["Ventas"]
 
