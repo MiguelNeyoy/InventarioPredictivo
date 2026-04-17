@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 
 class ValidadorDatos:
@@ -8,7 +9,9 @@ class ValidadorDatos:
     """
 
     def __init__(self):
-        self.df_historico = pd.read_csv("historico_maestro.csv")
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        csv_path = os.path.join(base_dir, "..", "ArchivosCVS", "historico_maestro.csv")
+        self.df_historico = pd.read_csv(csv_path)
         self.df_historico["Ventas"] = self.df_historico["Cantidad"]
         self.df_historico["ds"] = pd.to_datetime(self.df_historico["Fecha"])
         self.df_historico["y"] = self.df_historico["Ventas"]
@@ -19,7 +22,6 @@ class ValidadorDatos:
         Lanza ValueError si faltan columnas requeridas o hay datos insalvables.
         Devuelve el DataFrame limpio y formateado para Prophet.
         """
-        print("Cargando y concatenando historial histórico...")
 
         # 1. Validar columnas requeridas
         columnas_esperadas = {"Fecha", "Producto", "Ventas"}

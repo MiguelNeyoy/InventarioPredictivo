@@ -11,7 +11,6 @@ class MotorInventario:
     """
 
     def __init__(self, df_unificado):
-        print("Iniciando Motor de IA para Inventario...")
         self.df_historico = df_unificado
         feriados_mazatlan = pd.DataFrame(
             {
@@ -39,7 +38,6 @@ class MotorInventario:
         """
         Genera pronóstico para un periodo específico usando los datos históricos.
         """
-        print(f"Generando pronóstico desde {start_date} hasta {end_date}...")
         resultados = []
         lista_productos = self.df_historico["Producto"].unique()
 
@@ -73,7 +71,6 @@ class MotorInventario:
         """
         Calcula MAE y RMSE apartando los últimos dias_test para validación.
         """
-        print(f"Calculando métricas de precisión ({dias_test} días de test)...")
         resultados = []
         lista_productos = self.df_historico["Producto"].unique()
 

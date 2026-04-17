@@ -13,11 +13,14 @@
 - Required columns: `Fecha`, `Producto`, `Ventas`
 - Prophet format: `ds` (date), `y` (value)
 
+## Rules for Frontend
+- Full architecture: see `instrucciones/SKILLS/SKILL_GIT.md`
+
 ## Architecture
 - No HTTP APIs; Frontend imports Backend classes directly
 - All data passes as pandas DataFrames
-- Full architecture: see `.agents/instrucciones.md`
+- Full architecture: see `instrucciones/instrucciones.md`
 
 ## Additional Instruccion
 - No crees repositorios de git jamas uses git init 
-- Instrucciones para GIT : `.agents/SKILLS/SKILL_GIT.md`
+- Instrucciones para GIT : `instrucciones/SKILLS/SKILL_GIT.md`

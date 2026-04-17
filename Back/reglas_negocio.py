@@ -13,7 +13,6 @@ class LogicaNegocio:
         stock_actual_dict: Diccionario en forma de {"Producto": CantidadReal}
         porcentaje_seguridad: Margen adicional (%) sobre el estimado (default: 0)
         """
-        print("Evaluando inventario contra predicciones (Logica de Negocio)...")
         alertas = []
 
         for index, fila in df_predicciones.iterrows():

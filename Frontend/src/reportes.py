@@ -2,11 +2,16 @@ import flet as ft
 import io
 import base64
 import matplotlib
+import sys
+import os
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
-import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+from components.chart_tendency import crear_grafico_tendencia, crear_grafico_barras
 
 
 def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=None):
@@ -284,53 +289,9 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
         spacing=20,
     )
 
-    # Gráfica Principal: Tendencias de Ventas (Guardando Matplotlib image localmente)
-    def generar_grafico_lineas():
-        import os
+    
 
-        fig, ax = plt.subplots(figsize=(10, 3.5), facecolor="white")
-        meses = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO"]
-        real = [50, 80, 40, 120, 90, 180, 140]  # Solo hasta julio
-        proyectado = [70, 100, 60, 140, 110, 200, 160, 220]
-
-        ax.plot(
-            meses,
-            proyectado,
-            color="#cbd5e1",
-            linestyle="--",
-            linewidth=2,
-            marker="o",
-            label="Proyectado",
-        )
-        ax.plot(meses[:7], real, color="#0058be", linewidth=3, marker="o", label="Real")
-        ax.plot(
-            meses[5:],
-            [180, 140, 190],
-            color="#ef4444",
-            linewidth=2.5,
-            marker="o",
-            label="Predicción",
-        )
-
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.spines["left"].set_color("#cbd5e1")
-        ax.spines["bottom"].set_color("#cbd5e1")
-        ax.tick_params(colors="#505f76", labelsize=9)
-        ax.grid(axis="y", linestyle="--", alpha=0.3)
-        ax.set_ylim(bottom=0)
-
-        ax.legend(
-            frameon=False, loc="upper right", ncol=3, fontsize=9, labelcolor="#505f76"
-        )
-        plt.tight_layout()
-
-        filepath = os.path.abspath("tendencia.png")
-        plt.savefig(filepath, format="png", dpi=100, bbox_inches="tight")
-        plt.close(fig)
-        return filepath
-
-    # fin-generar_graficos_lineas
+    ruta_grafico = crear_grafico_tendencia(ultima_prediccion, None)
 
     tendencias_chart = ft.Container(
         content=ft.Column(
@@ -341,9 +302,9 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
                     weight=ft.FontWeight.BOLD,
                     color=text_on_bg,
                 ),
-                ft.Text("Proyección vs Realidad 2024", size=14, color=secondary),
+                ft.Text("Proyección vs Realidad", size=14, color=secondary),
                 ft.Container(height=10),
-                ft.Image(src=generar_grafico_lineas(), fit="contain", expand=True),
+                ft.Image(src=ruta_grafico, fit="contain", expand=True),
             ]
         ),
         bgcolor=ft.Colors.WHITE,
@@ -385,44 +346,52 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
 
     # fin-crear_barra_productos
 
-    top_productos = ft.Container(
-        content=ft.Column(
-            [
-                ft.Row(
-                    [
-                        ft.Text(
-                            "Top Productos",
-                            size=18,
-                            weight=ft.FontWeight.BOLD,
-                            color=text_on_bg,
-                        ),
-                        ft.Text(
-                            "RENDIMIENTO TOTAL ESTE MES",
-                            size=10,
-                            weight=ft.FontWeight.BOLD,
-                            color=secondary,
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                ),
-                ft.Container(height=10),
-                crear_barra_producto("Cerveza Pacífico", "$1.2M", 0.9),
-                crear_barra_producto("Hielo en Bolsa", "$840K", 0.7),
-                crear_barra_producto("Bloqueador Solar", "$620K", 0.55),
-                crear_barra_producto("Coca-Cola 3L", "$410K", 0.35),
-                crear_barra_producto("Botanas Surtidas", "$290K", 0.25),
-            ],
-            spacing=15,
-        ),
-        bgcolor=ft.Colors.WHITE,
-        padding=30,
-        border_radius=12,
-        border=ft.border.all(1, card_border),
-        shadow=ft.BoxShadow(
-            blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
-        ),
-        margin=ft.margin.only(bottom=20),
-    )
+    top_productos = None
+
+    if ultima_prediccion is not None and not ultima_prediccion.empty:
+        df_top = ultima_prediccion.sort_values("Venta_Estimada", ascending=False).head(5)
+        max_venta = df_top["Venta_Estimada"].max() if df_top["Venta_Estimada"].max() > 0 else 1
+
+        controles_top = [
+            ft.Row(
+                [
+                    ft.Text(
+                        "Top Productos",
+                        size=18,
+                        weight=ft.FontWeight.BOLD,
+                        color=text_on_bg,
+                    ),
+                    ft.Text(
+                        "MAYOR DEMANDA",
+                        size=10,
+                        weight=ft.FontWeight.BOLD,
+                        color=secondary,
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+            ft.Container(height=10),
+        ]
+        for _, row in df_top.iterrows():
+            controles_top.append(
+                crear_barra_producto(
+                    str(row["Producto"]),
+                    f"${row['Venta_Estimada']:,.0f}",
+                    float(row["Venta_Estimada"]) / float(max_venta) if max_venta > 0 else 0
+                )
+            )
+
+        top_productos = ft.Container(
+            content=ft.Column(controles_top, spacing=15),
+            bgcolor=ft.Colors.WHITE,
+            padding=30,
+            border_radius=12,
+            border=ft.border.all(1, card_border),
+            shadow=ft.BoxShadow(
+                blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
+            ),
+            margin=ft.margin.only(bottom=20),
+        )
 
     # Tabla de Historial Reciente
     tabla_reportes = ft.Container(
@@ -604,14 +573,13 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
         ),
     )  # fin-tabla_reportes
 
-    # Contenedor padre general (scrollable)
     contenido_principal = ft.Column(
         [
             titulo,
             kpis,
             tendencias_chart,
             crear_seccion_metricas(),
-            top_productos,
+            top_productos if top_productos else ft.Container(),
             tabla_reportes,
         ],
         scroll=ft.ScrollMode.AUTO,
