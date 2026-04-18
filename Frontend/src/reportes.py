@@ -67,16 +67,17 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
         # Crear filas de la tabla de métricas
         filas_metricas = []
         if ultima_metrica is not None and len(ultima_metrica) > 0:
-            for _, row in ultima_metrica.iterrows():
+for _, row in ultima_metrica.iterrows():
                 filas_metricas.append(
                     ft.DataRow(
                         cells=[
                             ft.DataCell(ft.Text(str(row["Producto"]), size=12)),
-                            ft.DataCell(ft.Text(str(row["MAE"])), size=12),
-                            ft.DataCell(ft.Text(str(row["RMSE"])), size=12),
+                            ft.DataCell(ft.Text(str(row["MAE"]), size=12)),
+                            ft.DataCell(ft.Text(str(row["RMSE"]), size=12)),
                         ]
                     )
                 )
+
         else:
             filas_metricas.append(
                 ft.DataRow(
