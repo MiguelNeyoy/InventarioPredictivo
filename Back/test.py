@@ -1,41 +1,75 @@
 import pandas as pd
-from predictor import MotorInventario # Importamos la clase
+from validador import ValidadorDatos
+from predictor import MotorInventario
+from reglas_negocio import LogicaNegocio
 
-print("=== INICIANDO PRUEBA DEL MOTOR BACKEND ===\n")
+print("=== INICIANDO PRUEBA DEL FLUJO BACKEND MODULARIZADO ===\n")
 
-# Simulamos lo que haría el compañero del Frontend (Leer el archivo)
+# Cargar datos del mes actual
+print("Cargando datos del mes actual...")
 try:
-    df_crudo = pd.read_csv("ventas_totales.csv")
-    print("Archivo CSV cargado correctamente (Simulación de Frontend).")
-except FileNotFoundError:
-    print("Error: No encuentro el CSV.")
+    df_crudo = pd.read_csv("ventas_mes_actual.csv")
+    df_crudo["Ventas"] = df_crudo["Cantidad"]  # Renombrar para consistencia
+    print("Datos del mes actual cargados correctamente.")
+    print("Primeros registros:\n", df_crudo.head())
+except Exception as e:
+    print(f"Error al cargar ventas_mes_actual.csv: {e}")
     exit()
 
-#  Creamos el objeto de tu clase
-mi_motor = MotorInventario()
+# 1. VALIDACION
+print("\n--- Fase 1: Validación y Limpieza ---")
+validador = ValidadorDatos()
+try:
+    df_unificado, df_usuario = validador.validar_y_limpiar(df_crudo)
+    print("Formato de columnas ajustado para Prophet:")
+    print(df_unificado.columns.tolist())
+except ValueError as e:
+    print(f"Error de validación: {e}")
+    exit()
 
-# Probamos el método de limpieza
-print("\n--- Probando limpiar_datos() ---")
-df_limpio = mi_motor.limpiar_datos(df_crudo)
-print("Formato de columnas ajustado para Prophet:")
-print(df_limpio.columns.tolist()) # Debería imprimir ['ds', 'Producto', 'y']
+start_date = df_usuario["ds"].min().strftime("%Y-%m-%d")
+end_date = df_usuario["ds"].max().strftime("%Y-%m-%d")
+print(f"Periodo del mes actual: {start_date} a {end_date}")
 
-# Probamos el método fuerte: La Predicción
-print("\n--- Probando generar_prediccion() ---")
-# Le pedimos predecir 15 días. Esto tomará unos segundos porque entrenará la IA.
-df_resultados = mi_motor.generar_prediccion(df_limpio, dias_a_predecir=15)
+# 2. PREDICCION
+print("\n--- Fase 2: Motor Predictivo ---")
+mi_motor = MotorInventario(df_unificado)
+# Generar predicción para el periodo del mes actual
+df_resultados = mi_motor.generar_prediccion(start_date, end_date)
+
+# Calcular ventas reales por producto
+ventas_reales = df_usuario.groupby("Producto")["y"].sum().reset_index()
+ventas_reales = ventas_reales.rename(columns={"y": "Venta_Real"})
+print("\nVentas reales del mes:")
+print(ventas_reales)
+
+print("\nVentas estimadas:")
+print(df_resultados)
+
+# Comparación
+comparacion = pd.merge(df_resultados, ventas_reales, on="Producto", how="left")
+comparacion["Diferencia"] = comparacion["Venta_Estimada"] - comparacion["Venta_Real"]
+print("\nComparación Estimado vs Real:")
+print(comparacion)
+
+print("\n--- Métricas de Precisión (MAE / RMSE) ---")
+df_metricas = mi_motor.calcular_metricas(dias_test=15)
+print(df_metricas)
 
 # Simulamos un diccionario de stock actual (lo que habría en la bodega hoy)
 stock_falso = {
-    "Cerveza Pacifico": 50000,  # Tenemos mucha, no debería pedir
-    "Bloqueador Solar": 10,   # Tenemos poco, debería alertar
-    "Hielo en Bolsa": 0       # No tenemos nada, alerta crítica
+    "Laptop Dell Inspiron": 50,
+    "Procesador Ryzen 5": 20,
+    "Memoria RAM 16GB": 100,
+    "Tarjeta Gráfica RTX 4060": 10,
+    "Monitor 24 pulgadas": 30,
 }
 
-#Probamos el motor de reglas de negocio
-print("\n--- Probando evaluar_stock() ---")
-df_alertas = mi_motor.evaluar_stock(df_resultados, stock_falso)
+# 3. REGLAS DE NEGOCIO
+print("\n--- Fase 3: Evaluación de Inventario (Reglas de Negocio) ---")
+logica = LogicaNegocio()
+df_alertas = logica.evaluar_stock(df_resultados, stock_falso, porcentaje_seguridad=15)
 
-print("\n=== RESULTADO FINAL QUE SE ENVIARÁ A FLET === ")
+print("\n=== RESULTADO FINAL QUE SE ENVIARÁ A FLET / FRONTEND === ")
 # Imprimimos la tabla final bonita en la consola
 print(df_alertas.to_string(index=False))

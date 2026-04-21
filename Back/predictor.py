@@ -1,107 +1,108 @@
 import pandas as pd
 from prophet import Prophet
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import numpy as np
+
 
 class MotorInventario:
     """
     Motor predictivo de inventario utilizando Prophet.
-    Procesa múltiples productos, genera pronósticos y evalúa alertas de reabastecimiento.
+    Recibe un DataFrame unificado y genera pronósticos para períodos específicos.
     """
 
-    def __init__(self):
+    def __init__(self, df_unificado):
         print("Iniciando Motor de IA para Inventario...")
-        # Aquí configuramos los días festivos locales 6
-        # Esto le dirá a la IA que espere picos de venta en estas fechas
-        feriados_mazatlan = pd.DataFrame({
-            'holiday': 'temporada_alta_mazatlan',
-            'ds': pd.to_datetime(['2026-02-15', '2026-02-16', '2026-02-17', # Carnaval
-                                  '2026-03-30', '2026-03-31', '2026-04-01', # Semana Santa
-                                  '2026-04-02', '2026-04-03', '2026-04-04']),
-            'lower_window': -1,
-            'upper_window': 1,
-        })
+        self.df_historico = df_unificado
+        feriados_mazatlan = pd.DataFrame(
+            {
+                "holiday": "temporada_alta_mazatlan",
+                "ds": pd.to_datetime(
+                    [
+                        "2026-02-15",
+                        "2026-02-16",
+                        "2026-02-17",  # Carnaval
+                        "2026-03-30",
+                        "2026-03-31",
+                        "2026-04-01",  # Semana Santa
+                        "2026-04-02",
+                        "2026-04-03",
+                        "2026-04-04",
+                    ]
+                ),
+                "lower_window": -1,
+                "upper_window": 1,
+            }
+        )
         self.feriados = feriados_mazatlan
 
-    def limpiar_datos(self, df_crudo):
+    def generar_prediccion(self, start_date, end_date):
         """
-            2: Recibe el Excel sucio y lo prepara para Prophet.
+        Genera pronóstico para un periodo específico usando los datos históricos.
         """
-        print("Limpiando datos y formateando columnas...")
-        # Eliminar filas vacías
-        df_limpio = df_crudo.dropna().copy()
-        
-        # Renombrar columnas a lo que Prophet exige (ds y y)
-        # Asumimos que el Excel original tiene columnas 'Fecha', 'Producto', 'Ventas'
-        df_limpio = df_limpio.rename(columns={
-            'Fecha': 'ds', 
-            'Ventas': 'y'
-        })
-        
-        # Asegurarnos de que la columna 'ds' sea formato fecha de Pandas
-        df_limpio['ds'] = pd.to_datetime(df_limpio['ds'])
-        
-        return df_limpio
-
-    def generar_prediccion(self, df_limpio, dias_a_predecir):
-        """
-         El Bucle Mágico que predice artículo por artículo.
-        """
-        print(f"Generando pronóstico para los próximos {dias_a_predecir} días...")
+        print(f"Generando pronóstico desde {start_date} hasta {end_date}...")
         resultados = []
-        lista_productos = df_limpio['Producto'].unique()
-        
+        lista_productos = self.df_historico["Producto"].unique()
+
         for articulo in lista_productos:
-           
-            df_filtrado = df_limpio[df_limpio['Producto'] == articulo]
-            
-            
+            df_filtrado = self.df_historico[
+                self.df_historico["Producto"] == articulo
+            ].copy()
+
             modelo = Prophet(holidays=self.feriados)
-            modelo.fit(df_filtrado[['ds', 'y']])
-            
-            
-            futuro = modelo.make_future_dataframe(periods=dias_a_predecir, freq='D')
+            modelo.fit(df_filtrado[["ds", "y"]])
+
+            futuro = pd.DataFrame(
+                {"ds": pd.date_range(start=start_date, end=end_date, freq="D")}
+            )
             prediccion = modelo.predict(futuro)
-            
-            
-            total_estimado = prediccion['yhat'].tail(dias_a_predecir).sum()
-            
-            
-            resultados.append({
-                "Producto": articulo,
-                "Venta_Estimada": round(max(0, total_estimado)) # max(0) evita ventas negativas
-            })
-            
+
+            total_estimado = prediccion["yhat"].sum()
+
+            resultados.append(
+                {
+                    "Producto": articulo,
+                    "Venta_Estimada": round(
+                        max(0, total_estimado)
+                    ),  # max(0) evita ventas negativas
+                }
+            )
+
         return pd.DataFrame(resultados)
 
-    def evaluar_stock(self, df_predicciones, stock_actual_dict):
+    def calcular_metricas(self, dias_test=15):
         """
-        Motor de reglas de negocio para emitir alertas.
+        Calcula MAE y RMSE apartando los últimos dias_test para validación.
         """
-        print("Evaluando inventario contra predicciones...")
-        alertas = []
-        
-        # Recorremos la tabla de predicciones que acabamos de generar
-        for index, fila in df_predicciones.iterrows():
-            articulo = fila['Producto']
-            estimado = fila['Venta_Estimada']
-            
-            # Buscamos cuánto stock tenemos en la vida real de este artículo
-            # Si no nos pasan el dato, asumimos 0
-            stock_real = stock_actual_dict.get(articulo, 0)
-            
-            # LA LÓGICA DE NEGOCIO
-            if estimado > stock_real:
-                estado_alerta = True
-                cantidad_a_comprar = estimado - stock_real
-            else:
-                estado_alerta = False
-                cantidad_a_comprar = 0
-                
-            alertas.append({
-                "Producto": articulo,
-                "Venta_Estimada": estimado,
-                "Stock_Actual": stock_real,
-                "Cantidad_A_Comprar": cantidad_a_comprar,
-                "Alerta_Surtir": estado_alerta
-            })
-            
-        return pd.DataFrame(alertas)
+        print(f"Calculando métricas de precisión ({dias_test} días de test)...")
+        resultados = []
+        lista_productos = self.df_historico["Producto"].unique()
+
+        for articulo in lista_productos:
+            df_articulo = self.df_historico[
+                self.df_historico["Producto"] == articulo
+            ].copy()
+            df_articulo = df_articulo.sort_values("ds")
+
+            if len(df_articulo) <= dias_test:
+                continue
+
+            df_entrenamiento = df_articulo.iloc[:-dias_test]
+            df_test = df_articulo.iloc[-dias_test:]
+
+            modelo = Prophet(holidays=self.feriados)
+            modelo.fit(df_entrenamiento[["ds", "y"]])
+
+            futuro = df_test[["ds"]]
+            prediccion = modelo.predict(futuro)
+
+            y_real = df_test["y"].values
+            y_predicho = prediccion["yhat"].values
+
+            mae = mean_absolute_error(y_real, y_predicho)
+            rmse = np.sqrt(mean_squared_error(y_real, y_predicho))
+
+            resultados.append(
+                {"Producto": articulo, "MAE": round(mae, 2), "RMSE": round(rmse, 2)}
+            )
+
+        return pd.DataFrame(resultados)
