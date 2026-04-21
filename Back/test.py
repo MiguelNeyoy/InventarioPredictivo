@@ -8,7 +8,7 @@ print("=== INICIANDO PRUEBA DEL FLUJO BACKEND MODULARIZADO ===\n")
 # Cargar datos del mes actual
 print("Cargando datos del mes actual...")
 try:
-    df_crudo = pd.read_csv("ventas_mes_actual.csv")
+    df_crudo = pd.read_csv("./ArchivosCVS/ventas_mes_actual.csv")
     df_crudo["Ventas"] = df_crudo["Cantidad"]  # Renombrar para consistencia
     print("Datos del mes actual cargados correctamente.")
     print("Primeros registros:\n", df_crudo.head())

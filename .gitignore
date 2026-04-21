@@ -10,6 +10,7 @@
 venv/
 mi_entrono/
 env/
+.ruff_cache/
 .venv/
 __pycache__/
 *.py[cod]
