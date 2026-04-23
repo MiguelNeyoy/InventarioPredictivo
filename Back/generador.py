@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 
-print("Iniciando la simulación de datos de ventas...")
-
 #  Definimos el periodo de tiempo (2 años de historia hasta el día de hoy)
 fechas = pd.date_range(start="2024-01-01", end="2026-02-27")
 

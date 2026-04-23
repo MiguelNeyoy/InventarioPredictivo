@@ -58,7 +58,6 @@ class ValidadorDatos:
             )
 
         # 5. Renombrar columnas para el modelo Prophet
-        print("Preparando columnas ('ds', 'y') para el motor predictivo...")
         df_limpio = df_limpio.rename(columns={"Ventas": "y"})
 
         df_usuario = df_limpio[["ds", "Producto", "y"]].copy()
@@ -72,6 +71,4 @@ class ValidadorDatos:
             subset=["ds", "Producto"], keep="last"
         )
         df_unificado = df_unificado.drop(columns=["Fuente"])
-
-        print(f"Datos unificados: {len(df_unificado)} registros")
         return df_unificado, df_usuario

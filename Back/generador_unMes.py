@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 
-print("Generando archivo de ventas del último mes (carga de usuario)...")
-
 # Definimos el periodo: últimos 30 días hasta hoy
 fechas = pd.date_range(start="2026-03-15", end="2026-04-13")
 
