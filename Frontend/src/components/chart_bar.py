@@ -17,7 +17,7 @@ def crear_grafico_barras(df_predicciones=None, titulo="Ventas por Producto"):
                 fch.BarChartGroup(
                     x=idx,
                     bar_rods=[
-                        ft.BarChartRod(
+                        fch.BarChartRod(
                             from_y=0,
                             to_y=valor,
                             width=40,
@@ -32,23 +32,23 @@ def crear_grafico_barras(df_predicciones=None, titulo="Ventas por Producto"):
         grupos = [
             fch.BarChartGroup(
                 x=0,
-                bar_rods=[ft.BarChartRod(from_y=0, to_y=50, width=40, color="#0058be")],
+                bar_rods=[fch.BarChartRod(from_y=0, to_y=50, width=40, color="#0058be")],
             ),
             fch.BarChartGroup(
                 x=1,
-                bar_rods=[ft.BarChartRod(from_y=0, to_y=80, width=40, color="#0058be")],
+                bar_rods=[fch.BarChartRod(from_y=0, to_y=80, width=40, color="#0058be")],
             ),
             fch.BarChartGroup(
                 x=2,
-                bar_rods=[ft.BarChartRod(from_y=0, to_y=40, width=40, color="#0058be")],
+                bar_rods=[fch.BarChartRod(from_y=0, to_y=40, width=40, color="#0058be")],
             ),
             fch.BarChartGroup(
                 x=3,
-                bar_rods=[ft.BarChartRod(from_y=0, to_y=120, width=40, color="#0058be")],
+                bar_rods=[fch.BarChartRod(from_y=0, to_y=120, width=40, color="#0058be")],
             ),
             fch.BarChartGroup(
                 x=4,
-                bar_rods=[ft.BarChartRod(from_y=0, to_y=90, width=40, color="#0058be")],
+                bar_rods=[fch.BarChartRod(from_y=0, to_y=90, width=40, color="#0058be")],
             ),
         ]
 
