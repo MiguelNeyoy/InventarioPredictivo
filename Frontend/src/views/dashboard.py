@@ -114,38 +114,30 @@ def crear_vista_dashboard(page: ft.Page):
 
     graf_tendencia, graf_barras = actualizar_graficos()
 
-    file_picker = ft.FilePicker()
+    file_picker = ft.FilePicker(on_result=None)
     page.overlay.append(file_picker)
 
-    def on_file_ventas_result(e):
+    def on_result_ventas(e: ft.FilePickerResultEvent):
         if e.files and len(e.files) > 0:
             app_state.ruta_archivo_ventas = e.files[0].path
             texto_estado_ventas.value = f"Archivo de ventas: {e.files[0].name}"
             texto_estado_ventas.color = ft.Colors.GREEN_600
         page.update()
 
-    def on_file_stock_result(e):
+    def on_result_stock(e: ft.FilePickerResultEvent):
         if e.files and len(e.files) > 0:
             app_state.ruta_archivo_stock = e.files[0].path
             texto_estado_stock.value = f"Archivo de stock: {e.files[0].name}"
             texto_estado_stock.color = ft.Colors.GREEN_600
         page.update()
 
-    file_picker.on_result = None
-
     def abrir_dialogo_ventas(e):
-        file_picker.on_result = on_file_ventas_result
-        file_picker.pick_files(
-            dialog_title="Seleccionar archivo de ventas",
-            allowed_extensions=["csv", "xlsx"]
-        )
+        file_picker.on_result = on_result_ventas
+        file_picker.pick_files(allowed_extensions=["csv", "xlsx"])
 
     def abrir_dialogo_stock(e):
-        file_picker.on_result = on_file_stock_result
-        file_picker.pick_files(
-            dialog_title="Seleccionar archivo de stock",
-            allowed_extensions=["csv", "xlsx"]
-        )
+        file_picker.on_result = on_result_stock
+        file_picker.pick_files(allowed_extensions=["csv", "xlsx"])
 
     def actualizar_tabla(df_alertas):
         nuevas_filas = []
