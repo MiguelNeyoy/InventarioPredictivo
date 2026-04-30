@@ -8,6 +8,7 @@ from views.dashboard import crear_vista_dashboard
 
 
 def main(page: ft.Page):
+    
     page.title = "Estación de Análisis Centralizada"
     page.bgcolor = "#F4F6F8"
     page.padding = 0

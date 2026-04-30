@@ -1,6 +1,6 @@
 ﻿Producto,Venta_Estimada,Stock_Actual,Cantidad_A_Comprar,Alerta_Surtir
-Laptop Dell Inspiron,96,36,60,True
-Memoria RAM 16GB,266,113,153,True
-Monitor 24 pulgadas,114,29,85,True
-Tarjeta Gráfica RTX 4060,56,7,49,True
-Procesador Ryzen 5,159,30,129,True
+Laptop Dell Inspiron,84,36,48,True
+Memoria RAM 16GB,257,113,144,True
+Monitor 24 pulgadas,106,29,77,True
+Tarjeta Gráfica RTX 4060,52,7,45,True
+Procesador Ryzen 5,149,30,119,True
