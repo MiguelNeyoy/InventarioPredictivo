@@ -16,13 +16,12 @@ def crear_grafico_barras(df_predicciones=None, titulo="Ventas por Producto"):
             grupos.append(
                 fch.BarChartGroup(
                     x=idx,
-                    bar_rods=[
+                    rods=[
                         fch.BarChartRod(
                             from_y=0,
                             to_y=valor,
                             width=40,
                             color="#0058be",
-                            border_radius=0,
                         ),
                     ],
                 )
@@ -30,30 +29,15 @@ def crear_grafico_barras(df_predicciones=None, titulo="Ventas por Producto"):
     else:
         etiquetas = ["Ene", "Feb", "Mar", "Abr", "May"]
         grupos = [
-            fch.BarChartGroup(
-                x=0,
-                bar_rods=[fch.BarChartRod(from_y=0, to_y=50, width=40, color="#0058be")],
-            ),
-            fch.BarChartGroup(
-                x=1,
-                bar_rods=[fch.BarChartRod(from_y=0, to_y=80, width=40, color="#0058be")],
-            ),
-            fch.BarChartGroup(
-                x=2,
-                bar_rods=[fch.BarChartRod(from_y=0, to_y=40, width=40, color="#0058be")],
-            ),
-            fch.BarChartGroup(
-                x=3,
-                bar_rods=[fch.BarChartRod(from_y=0, to_y=120, width=40, color="#0058be")],
-            ),
-            fch.BarChartGroup(
-                x=4,
-                bar_rods=[fch.BarChartRod(from_y=0, to_y=90, width=40, color="#0058be")],
-            ),
+            fch.BarChartGroup(x=0, rods=[fch.BarChartRod(from_y=0, to_y=50, width=40, color="#0058be")]),
+            fch.BarChartGroup(x=1, rods=[fch.BarChartRod(from_y=0, to_y=80, width=40, color="#0058be")]),
+            fch.BarChartGroup(x=2, rods=[fch.BarChartRod(from_y=0, to_y=40, width=40, color="#0058be")]),
+            fch.BarChartGroup(x=3, rods=[fch.BarChartRod(from_y=0, to_y=120, width=40, color="#0058be")]),
+            fch.BarChartGroup(x=4, rods=[fch.BarChartRod(from_y=0, to_y=90, width=40, color="#0058be")]),
         ]
 
     chart = fch.BarChart(
-        bar_groups=grupos,
+        groups=grupos,
         interactive=True,
     )
 
