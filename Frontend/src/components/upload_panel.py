@@ -7,6 +7,8 @@ def crear_upload_panel(
     texto_umbral_label,
     texto_estado_ventas,
     texto_estado_stock,
+    texto_estado,
+    texto_parametros,
     abrir_dialogo_ventas,
     abrir_dialogo_stock,
     procesar_prediccion,

@@ -169,30 +169,8 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
                         ),
                     ]
                 ),
-                ft.Container(
-                    content=ft.Row(
-                        [
-                            ft.ElevatedButton(
-                                "SEMANAL",
-                                color=primary,
-                                bgcolor=ft.Colors.WHITE,
-                                style=ft.ButtonStyle(
-                                    shape=ft.RoundedRectangleBorder(radius=6)
-                                ),
-                            ),
-                            ft.TextButton(
-                                "MENSUAL", style=ft.ButtonStyle(color=secondary)
-                            ),
-                        ],
-                        spacing=0,
-                    ),
-                    bgcolor="#f2f3ff",
-                    border_radius=8,
-                    padding=5,
-                    border=ft.border.all(1, "#dae2fd"),
-                ),
             ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            alignment=ft.MainAxisAlignment.START,
             vertical_alignment=ft.CrossAxisAlignment.END,
         ),
         margin=ft.margin.only(bottom=20),
@@ -285,32 +263,34 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
 
     
 
-    grafico_tendencia = crear_grafico_linea(df_historico, ultima_prediccion, "Tendencias de Ventas Mensuales")
+    # Gráficos desactivados temporalmente para diagnosticar alto CPU
+    # grafico_tendencia = crear_grafico_linea(df_historico, ultima_prediccion, "Tendencias de Ventas")
 
-    tendencias_chart = ft.Container(
-        content=ft.Column(
-            controls=[
-                ft.Text(
-                    "Tendencias de Ventas Mensuales",
-                    size=18,
-                    weight=ft.FontWeight.BOLD,
-                    color=text_on_bg,
-                ),
-                ft.Text("Proyección vs Realidad", size=14, color=secondary),
-                ft.Container(height=10),
-                grafico_tendencia,
-            ]
-        ),
-        bgcolor=ft.Colors.WHITE,
-        padding=30,
-        border_radius=12,
-        border=ft.border.all(1, card_border),
-        shadow=ft.BoxShadow(
-            blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
-        ),
-        height=380,
-        margin=ft.margin.only(top=20, bottom=20),
-    )
+    tendencias_chart = ft.Container()
+    # tendencias_chart = ft.Container(
+    #     content=ft.Column(
+    #         controls=[
+    #             ft.Text(
+    #                 "Tendencias de Ventas Mensuales",
+    #                 size=18,
+    #                 weight=ft.FontWeight.BOLD,
+    #                 color=text_on_bg,
+    #             ),
+    #             ft.Text("Proyección vs Realidad", size=14, color=secondary),
+    #             ft.Container(height=10),
+    #             grafico_tendencia,
+    #         ]
+    #     ),
+    #     bgcolor=ft.Colors.WHITE,
+    #     padding=30,
+    #     border_radius=12,
+    #     border=ft.border.all(1, card_border),
+    #     shadow=ft.BoxShadow(
+    #         blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
+    #     ),
+    #     height=380,
+    #     margin=ft.margin.only(top=20, bottom=20),
+    # )
 
     # Gráficas Secundarias: Top Productos
     def crear_barra_producto(nombre, monto, porcentaje_ancho):
@@ -340,20 +320,21 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
 
     # fin-crear_barra_productos
 
+    # Gráficos desactivados temporalmente para diagnosticar alto CPU
     top_productos = None
 
-    if ultima_prediccion is not None and not ultima_prediccion.empty:
-        top_productos = ft.Container(
-            content=crear_top_productos_chart(ultima_prediccion),
-            bgcolor=ft.Colors.WHITE,
-            padding=30,
-            border_radius=12,
-            border=ft.border.all(1, card_border),
-            shadow=ft.BoxShadow(
-                blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
-            ),
-            margin=ft.margin.only(bottom=20),
-        )
+    # if ultima_prediccion is not None and not ultima_prediccion.empty:
+    #     top_productos = ft.Container(
+    #         content=crear_top_productos_chart(ultima_prediccion),
+    #         bgcolor=ft.Colors.WHITE,
+    #         padding=30,
+    #         border_radius=12,
+    #         border=ft.border.all(1, card_border),
+    #         shadow=ft.BoxShadow(
+    #             blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
+    #         ),
+    #         margin=ft.margin.only(bottom=20),
+    #     )
 
     # Tabla de Historial Reciente
     tabla_reportes = ft.Container(
