@@ -1,64 +1,70 @@
 import flet as ft
-from flet_charts import BarChart, BarChartGroup, BarChartDataPoint
+import flet_charts as fch
 
 
 def crear_grafico_barras(df_predicciones=None, titulo="Ventas por Producto"):
-    if df_predicciones is None or df_predicciones.empty:
-        grupos = [
-            BarChartGroup(
-                x=0,
-                bar_data_points=[
-                    BarChartDataPoint(y=50),
-                    BarChartDataPoint(y=80),
-                    BarChartDataPoint(y=40),
-                ],
-            ),
-            BarChartGroup(
-                x=1,
-                bar_data_points=[
-                    BarChartDataPoint(y=120),
-                    BarChartDataPoint(y=90),
-                    BarChartDataPoint(y=180),
-                ],
-            ),
-            BarChartGroup(
-                x=2,
-                bar_data_points=[
-                    BarChartDataPoint(y=140),
-                    BarChartDataPoint(y=60),
-                    BarChartDataPoint(y=100),
-                ],
-            ),
-        ]
-        etiquetas = ["Ene", "Feb", "Mar"]
-    else:
-        df_top = df_predicciones.head(10)
-        grupos = []
-        etiquetas = []
+    grupos = []
+    etiquetas = []
 
+    if df_predicciones is not None and not df_predicciones.empty:
+        df_top = df_predicciones.head(10)
+        
         for idx, (_, row) in enumerate(df_top.iterrows()):
             producto = str(row.get("Producto", ""))[:8]
             etiquetas.append(producto)
+            valor = float(row.get("Venta_Estimada", 0))
             grupos.append(
-                BarChartGroup(
+                fch.BarChartGroup(
                     x=idx,
-                    bar_data_points=[
-                        BarChartDataPoint(y=float(row.get("Venta_Estimada", 0)))
+                    bar_rods=[
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=valor,
+                            width=40,
+                            color="#0058be",
+                            border_radius=0,
+                        ),
                     ],
                 )
             )
+    else:
+        etiquetas = ["Ene", "Feb", "Mar", "Abr", "May"]
+        grupos = [
+            fch.BarChartGroup(
+                x=0,
+                bar_rods=[ft.BarChartRod(from_y=0, to_y=50, width=40, color="#0058be")],
+            ),
+            fch.BarChartGroup(
+                x=1,
+                bar_rods=[ft.BarChartRod(from_y=0, to_y=80, width=40, color="#0058be")],
+            ),
+            fch.BarChartGroup(
+                x=2,
+                bar_rods=[ft.BarChartRod(from_y=0, to_y=40, width=40, color="#0058be")],
+            ),
+            fch.BarChartGroup(
+                x=3,
+                bar_rods=[ft.BarChartRod(from_y=0, to_y=120, width=40, color="#0058be")],
+            ),
+            fch.BarChartGroup(
+                x=4,
+                bar_rods=[ft.BarChartRod(from_y=0, to_y=90, width=40, color="#0058be")],
+            ),
+        ]
+
+    chart = fch.BarChart(
+        bar_groups=grupos,
+        interactive=True,
+    )
 
     return ft.Container(
         content=ft.Column(
             controls=[
                 ft.Text(titulo, weight=ft.FontWeight.BOLD, size=16),
-                ft.BarChart(
-                    bar_groups=grupos,
-                    width=500,
+                ft.Container(
+                    content=chart,
                     height=250,
-                    min_y=0,
-                    x_axis_labels=etiquetas,
-                    interactive=True,
+                    expand=True,
                 ),
             ]
         ),
