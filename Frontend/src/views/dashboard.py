@@ -71,7 +71,7 @@ def crear_vista_dashboard(page: ft.Page):
         controls=[],
         spacing=20,
     )
-
+    
     def actualizar_tabla(df_alertas):
         nuevas_filas = []
         for _, row in df_alertas.iterrows():
@@ -263,6 +263,11 @@ def crear_vista_dashboard(page: ft.Page):
         ),
         padding=ft.Padding(top=20, right=0, bottom=20, left=0),
     )
+    texto_estado = ft.Text(
+        "Configure los parámetros y cargue los archivos necesarios.",
+        color=ft.Colors.BLUE_GREY_400,
+        text_align=ft.TextAlign.CENTER,
+    )
 
     tarjetas_superiores = ft.Row(
         controls=[
@@ -325,13 +330,6 @@ def crear_vista_dashboard(page: ft.Page):
                         ),
                     ]
                 ),
-                ft.Text(
-                    "Se han detectado patrones de crecimiento sostenido en la categoría SaaS. La proyección para el Q4 muestra un incremento del 15%."
-                ),
-                ft.Divider(height=20),
-                ft.Text("Recomendaciones:", weight=ft.FontWeight.BOLD),
-                ft.Text("• Aumentar stock para SaaS Tier 1."),
-                ft.Text("• Revisar precios de API Gateway."),
             ]
         ),
         bgcolor=ft.Colors.BLUE_50,
@@ -363,7 +361,7 @@ def crear_vista_dashboard(page: ft.Page):
     )
 
     return ft.Column(
-        controls=[indicador_carga, texto_estado, cuerpo_dashboard],
+        controls=[cuerpo_dashboard],
         expand=True,
         spacing=0,
     )
