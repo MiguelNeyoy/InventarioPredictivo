@@ -9,12 +9,12 @@ def crear_grafico_linea(df_historico=None, df_prediccion=None, titulo="Tendencia
         df_historico = df_historico.sort_values("ds")
         puntos = []
         for i, (_, row) in enumerate(df_historico.iterrows()):
-            puntos.append(fch.LineChartDataPoint(i, float(row.get("y", 0))))
+            puntos.append(fch.LineChartDataPoint(x=i, y=float(row.get("y", 0))))
         
         if puntos:
             data_series.append(
                 fch.LineChartData(
-                    data_points=puntos,
+                    points=puntos,
                     color="#0058be",
                     label="Histórico",
                     stroke_width=2,
@@ -26,12 +26,12 @@ def crear_grafico_linea(df_historico=None, df_prediccion=None, titulo="Tendencia
         puntos = []
         
         for i, (_, row) in enumerate(df_prediccion.iterrows()):
-            puntos.append(fch.LineChartDataPoint(max_x + i, float(row.get("Venta_Estimada", 0))))
+            puntos.append(fch.LineChartDataPoint(x=max_x + i, y=float(row.get("Venta_Estimada", 0))))
         
         if puntos:
             data_series.append(
                 fch.LineChartData(
-                    data_points=puntos,
+                    points=puntos,
                     color="#ef4444",
                     label="Predicción",
                     stroke_width=2,
@@ -40,17 +40,17 @@ def crear_grafico_linea(df_historico=None, df_prediccion=None, titulo="Tendencia
 
     if not data_series:
         puntos_default = [
-            fch.LineChartDataPoint(0, 50),
-            fch.LineChartDataPoint(1, 80),
-            fch.LineChartDataPoint(2, 40),
-            fch.LineChartDataPoint(3, 120),
-            fch.LineChartDataPoint(4, 90),
-            fch.LineChartDataPoint(5, 180),
-            fch.LineChartDataPoint(6, 140),
+            fch.LineChartDataPoint(x=0, y=50),
+            fch.LineChartDataPoint(x=1, y=80),
+            fch.LineChartDataPoint(x=2, y=40),
+            fch.LineChartDataPoint(x=3, y=120),
+            fch.LineChartDataPoint(x=4, y=90),
+            fch.LineChartDataPoint(x=5, y=180),
+            fch.LineChartDataPoint(x=6, y=140),
         ]
         data_series.append(
             fch.LineChartData(
-                data_points=puntos_default,
+                points=puntos_default,
                 color="#0058be",
                 label="Sin datos",
                 stroke_width=2,
