@@ -117,14 +117,14 @@ def crear_vista_dashboard(page: ft.Page):
     file_picker = ft.FilePicker()
     page.overlay.append(file_picker)
 
-    def on_file_ventas_result(e: ft.FilePickerResultEvent):
+    def on_file_ventas_result(e):
         if e.files and len(e.files) > 0:
             app_state.ruta_archivo_ventas = e.files[0].path
             texto_estado_ventas.value = f"Archivo de ventas: {e.files[0].name}"
             texto_estado_ventas.color = ft.Colors.GREEN_600
         page.update()
 
-    def on_file_stock_result(e: ft.FilePickerResultEvent):
+    def on_file_stock_result(e):
         if e.files and len(e.files) > 0:
             app_state.ruta_archivo_stock = e.files[0].path
             texto_estado_stock.value = f"Archivo de stock: {e.files[0].name}"
