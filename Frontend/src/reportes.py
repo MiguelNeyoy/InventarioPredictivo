@@ -67,7 +67,7 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
         # Crear filas de la tabla de métricas
         filas_metricas = []
         if ultima_metrica is not None and len(ultima_metrica) > 0:
-for _, row in ultima_metrica.iterrows():
+            for _, row in ultima_metrica.iterrows():
                 filas_metricas.append(
                     ft.DataRow(
                         cells=[
@@ -458,20 +458,20 @@ for _, row in ultima_metrica.iterrows():
                                                 color=primary,
                                                 size=16,
                                             ),
-                                            ft.Text("Ventas Q3 - Consolidado"),
+                                            ft.Text(""),#Agregar variables para mostrar los reportes generados
                                         ]
                                     )
                                 ),
                                 ft.DataCell(
-                                    ft.Text("Admin Sistema", color=secondary, size=14)
+                                    ft.Text("", color=secondary, size=14)#Agregar variables para mostrar los reportes generados
                                 ),
                                 ft.DataCell(
-                                    ft.Text("Oct 12, 2024", color=secondary, size=14)
+                                    ft.Text("", color=secondary, size=14)#Agregar variables para mostrar los reportes generados
                                 ),
                                 ft.DataCell(
                                     ft.Container(
                                         content=ft.Text(
-                                            "Completado",
+                                            "",#Agregar variables para mostrar los reportes generados
                                             size=12,
                                             color=ft.Colors.GREEN_700,
                                             weight=ft.FontWeight.BOLD,
@@ -495,20 +495,20 @@ for _, row in ultima_metrica.iterrows():
                                                 color=primary,
                                                 size=16,
                                             ),
-                                            ft.Text("Análisis de Demanda - Invierno"),
+                                            ft.Text(""),
                                         ]
                                     )
                                 ),
                                 ft.DataCell(
-                                    ft.Text("Admin Sistema", color=secondary, size=14)
+                                    ft.Text("", color=secondary, size=14)#Agregar variables para mostrar los reportes generados
                                 ),
                                 ft.DataCell(
-                                    ft.Text("Oct 10, 2024", color=secondary, size=14)
+                                    ft.Text("", color=secondary, size=14)#Agregar variables para mostrar los reportes generados
                                 ),
                                 ft.DataCell(
                                     ft.Container(
                                         content=ft.Text(
-                                            "Completado",
+                                            "",#Agregar variables para mostrar los reportes generados
                                             size=12,
                                             color=ft.Colors.GREEN_700,
                                             weight=ft.FontWeight.BOLD,
@@ -532,20 +532,20 @@ for _, row in ultima_metrica.iterrows():
                                                 color=primary,
                                                 size=16,
                                             ),
-                                            ft.Text("Pronóstico de Ventas Q4"),
+                                            ft.Text(""),#Agregar variables para mostrar los reportes generados
                                         ]
                                     )
                                 ),
                                 ft.DataCell(
-                                    ft.Text("Admin Sistema", color=secondary, size=14)
+                                    ft.Text("", color=secondary, size=14)#Agregar variables para mostrar los reportes generados
                                 ),
                                 ft.DataCell(
-                                    ft.Text("Oct 08, 2024", color=secondary, size=14)
+                                    ft.Text("", color=secondary, size=14)#Agregar variables para mostrar los reportes generados
                                 ),
                                 ft.DataCell(
                                     ft.Container(
                                         content=ft.Text(
-                                            "En proceso",
+                                            "",#Agregar variables para mostrar los reportes generados
                                             size=12,
                                             color=ft.Colors.ORANGE_700,
                                             weight=ft.FontWeight.BOLD,
