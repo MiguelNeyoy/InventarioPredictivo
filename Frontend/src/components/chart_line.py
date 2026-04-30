@@ -16,7 +16,6 @@ def crear_grafico_linea(df_historico=None, df_prediccion=None, titulo="Tendencia
                 fch.LineChartData(
                     points=puntos,
                     color="#0058be",
-                    label="Histórico",
                     stroke_width=2,
                 )
             )
@@ -33,7 +32,6 @@ def crear_grafico_linea(df_historico=None, df_prediccion=None, titulo="Tendencia
                 fch.LineChartData(
                     points=puntos,
                     color="#ef4444",
-                    label="Predicción",
                     stroke_width=2,
                 )
             )
@@ -52,7 +50,6 @@ def crear_grafico_linea(df_historico=None, df_prediccion=None, titulo="Tendencia
             fch.LineChartData(
                 points=puntos_default,
                 color="#0058be",
-                label="Sin datos",
                 stroke_width=2,
             )
         )
