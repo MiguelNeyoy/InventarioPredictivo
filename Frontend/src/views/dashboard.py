@@ -29,6 +29,14 @@ ruta_archivo_stock = ""
 def crear_vista_dashboard(page: ft.Page):
     global ultima_prediccion, ultima_metrica, ruta_archivo_ventas, ruta_archivo_stock
 
+    #Implementacion para abrir el explorador de archivos con flet
+    file_picker_ventas = ft.FilePicker()
+    file_picker_stock = ft.FilePicker()
+    #Implementacion para abrir el explorador de archivos con flet
+    page.overlay.append(file_picker_ventas)
+    page.overlay.append(file_picker_stock)
+    
+    
     indicador_carga = ft.ProgressRing(visible=False, scale=1.5)
     texto_estado = ft.Text(
         "Configure los parámetros y cargue los archivos necesarios.",
@@ -107,6 +115,13 @@ def crear_vista_dashboard(page: ft.Page):
             title="Seleccionar archivo de ventas",
             filetypes=[("Archivos CSV", "*.csv"), ("Archivos Excel", "*.xlsx")],
         )
+        
+        def abrir_dialogo_ventas(e):#Implementacion para abrir el explorador de archivos con flet
+            file_picker_ventas.pick_files(
+            allow_multiple=False,
+            allowed_extensions=["csv", "xlsx"]
+        )
+
         root.destroy()
         if file_path:
             global ruta_archivo_ventas
@@ -114,6 +129,7 @@ def crear_vista_dashboard(page: ft.Page):
             texto_estado_ventas.value = f"Archivo de ventas: {os.path.basename(file_path)}"
             texto_estado_ventas.color = ft.Colors.GREEN_600
             page.update()
+            
 
     def abrir_dialogo_stock(e):
         import tkinter as tk
@@ -126,6 +142,13 @@ def crear_vista_dashboard(page: ft.Page):
             title="Seleccionar archivo de stock",
             filetypes=[("Archivos CSV", "*.csv"), ("Archivos Excel", "*.xlsx")],
         )
+        
+        def abrir_dialogo_stock(e):#Implementacion para abrir el explorador de archivos con flet
+            file_picker_stock.pick_files(
+            allow_multiple=False,
+            allowed_extensions=["csv", "xlsx"]
+        )
+            
         root.destroy()
         if file_path:
             global ruta_archivo_stock
