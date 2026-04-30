@@ -4,7 +4,7 @@ import flet as ft
 def crear_upload_panel(
     campo_dias,
     slider_umbral,
-    texto_umbral,
+    texto_umbral_label,
     texto_estado_ventas,
     texto_estado_stock,
     abrir_dialogo_ventas,
@@ -22,7 +22,7 @@ def crear_upload_panel(
                 ft.Container(height=10),
                 ft.Row([campo_dias, ft.Text("días")], spacing=10),
                 ft.Container(height=10),
-                ft.Row([slider_umbral, texto_umbral], spacing=10),
+                ft.Row([slider_umbral, texto_umbral_label], spacing=10),
                 ft.Container(height=15),
                 ft.ElevatedButton(
                     content=ft.Row(

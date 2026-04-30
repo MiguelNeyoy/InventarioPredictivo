@@ -1,21 +1,14 @@
 import flet as ft
-import io
-import base64
-import matplotlib
 import sys
 import os
 
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import pandas as pd
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from components.chart_tendency import crear_grafico_tendencia, crear_grafico_barras
+from components.chart_line import crear_grafico_linea
+from components.chart_bar import crear_grafico_barras, crear_top_productos_chart
 
 
-def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=None):
-    # Colores principales de la interfaz base
+def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=None, df_historico=None):
     bg_color = "#faf8ff"
     text_on_bg = "#131b2e"
     primary = "#0058be"
@@ -67,7 +60,7 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
         # Crear filas de la tabla de métricas
         filas_metricas = []
         if ultima_metrica is not None and len(ultima_metrica) > 0:
-for _, row in ultima_metrica.iterrows():
+            for _, row in ultima_metrica.iterrows():
                 filas_metricas.append(
                     ft.DataRow(
                         cells=[
@@ -292,11 +285,11 @@ for _, row in ultima_metrica.iterrows():
 
     
 
-    ruta_grafico = crear_grafico_tendencia(ultima_prediccion, None)
+    grafico_tendencia = crear_grafico_linea(df_historico, ultima_prediccion, "Tendencias de Ventas Mensuales")
 
     tendencias_chart = ft.Container(
         content=ft.Column(
-            [
+            controls=[
                 ft.Text(
                     "Tendencias de Ventas Mensuales",
                     size=18,
@@ -305,7 +298,7 @@ for _, row in ultima_metrica.iterrows():
                 ),
                 ft.Text("Proyección vs Realidad", size=14, color=secondary),
                 ft.Container(height=10),
-                ft.Image(src=ruta_grafico, fit="contain", expand=True),
+                grafico_tendencia,
             ]
         ),
         bgcolor=ft.Colors.WHITE,
@@ -350,40 +343,8 @@ for _, row in ultima_metrica.iterrows():
     top_productos = None
 
     if ultima_prediccion is not None and not ultima_prediccion.empty:
-        df_top = ultima_prediccion.sort_values("Venta_Estimada", ascending=False).head(5)
-        max_venta = df_top["Venta_Estimada"].max() if df_top["Venta_Estimada"].max() > 0 else 1
-
-        controles_top = [
-            ft.Row(
-                [
-                    ft.Text(
-                        "Top Productos",
-                        size=18,
-                        weight=ft.FontWeight.BOLD,
-                        color=text_on_bg,
-                    ),
-                    ft.Text(
-                        "MAYOR DEMANDA",
-                        size=10,
-                        weight=ft.FontWeight.BOLD,
-                        color=secondary,
-                    ),
-                ],
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            ),
-            ft.Container(height=10),
-        ]
-        for _, row in df_top.iterrows():
-            controles_top.append(
-                crear_barra_producto(
-                    str(row["Producto"]),
-                    f"${row['Venta_Estimada']:,.0f}",
-                    float(row["Venta_Estimada"]) / float(max_venta) if max_venta > 0 else 0
-                )
-            )
-
         top_productos = ft.Container(
-            content=ft.Column(controles_top, spacing=15),
+            content=crear_top_productos_chart(ultima_prediccion),
             bgcolor=ft.Colors.WHITE,
             padding=30,
             border_radius=12,
