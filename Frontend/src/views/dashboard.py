@@ -115,7 +115,7 @@ def crear_vista_dashboard(page: ft.Page):
     graf_tendencia, graf_barras = actualizar_graficos()
 
     file_picker = ft.FilePicker()
-    page.services.append(file_picker)
+    page.overlay.append(file_picker)
 
     def on_file_ventas_result(e):
         if e.files and len(e.files) > 0:
