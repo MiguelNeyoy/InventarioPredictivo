@@ -115,39 +115,32 @@ def crear_vista_dashboard(page: ft.Page):
     graf_tendencia, graf_barras = actualizar_graficos()
 
     file_picker = ft.FilePicker()
-    page.overlay.append(file_picker)
+    page.services.append(file_picker)
 
-    def on_file_ventas_result(e):
-        if e.files and len(e.files) > 0:
-            app_state.ruta_archivo_ventas = e.files[0].path
-            texto_estado_ventas.value = f"Archivo de ventas: {e.files[0].name}"
+    async def on_file_ventas_result(e, files):
+        if files and len(files) > 0:
+            app_state.ruta_archivo_ventas = files[0].path
+            texto_estado_ventas.value = f"Archivo de ventas: {files[0].name}"
             texto_estado_ventas.color = ft.Colors.GREEN_600
         page.update()
 
-    def on_file_stock_result(e):
-        if e.files and len(e.files) > 0:
-            app_state.ruta_archivo_stock = e.files[0].path
-            texto_estado_stock.value = f"Archivo de stock: {e.files[0].name}"
+    async def on_file_stock_result(e, files):
+        if files and len(files) > 0:
+            app_state.ruta_archivo_stock = files[0].path
+            texto_estado_stock.value = f"Archivo de stock: {files[0].name}"
             texto_estado_stock.color = ft.Colors.GREEN_600
         page.update()
 
-    file_picker.on_result = lambda e: (
-        on_file_ventas_result(e) if hasattr(e, 'files') and app_state.ruta_archivo_stock == "" 
-        else on_file_stock_result(e)
-    )
-
     def abrir_dialogo_ventas(e):
         file_picker.pick_files(
-            allowed=["csv", "xlsx"],
             dialog_title="Seleccionar archivo de ventas",
-            on_result=on_file_ventas_result
+            on_result=lambda e: on_file_ventas_result(e, e.files)
         )
 
     def abrir_dialogo_stock(e):
         file_picker.pick_files(
-            allowed=["csv", "xlsx"],
             dialog_title="Seleccionar archivo de stock",
-            on_result=on_file_stock_result
+            on_result=lambda e: on_file_stock_result(e, e.files)
         )
 
     def actualizar_tabla(df_alertas):
