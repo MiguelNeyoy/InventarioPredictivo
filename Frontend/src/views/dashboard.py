@@ -354,8 +354,8 @@ def crear_vista_dashboard(page: ft.Page):
         texto_estado_stock,
         texto_estado,
         texto_parametros,
-        abrir_explorador_ventas,
-        #abrir_dialogo_ventas,#Añadiendo comentario
+        abrir_explorador_ventas,#Nueva funcion que abre el explorador de archivos
+        #abrir_dialogo_ventas,#Funcion anterior que abria el explorador de archivos
         abrir_dialogo_stock,
         procesar_prediccion,
     )
