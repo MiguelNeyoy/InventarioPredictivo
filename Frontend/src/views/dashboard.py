@@ -38,6 +38,9 @@ app_state = AppState()
 
 
 def crear_vista_dashboard(page: ft.Page):
+    
+    file_picker = ft.FilePicker()
+    
     global app_state
 
     indicador_carga = ft.ProgressRing(visible=False, scale=1.5)
@@ -148,7 +151,14 @@ def crear_vista_dashboard(page: ft.Page):
             page.update()
         except Exception as tk_err:
             print(f"[ERROR tkinter ventas] {tk_err}")
-
+            
+    async def abrir_explorador_ventas(e):
+        # El resultado se obtiene directamente del método await
+        await file_picker.pick_files(
+            dialog_title= "Seleccionar archivo de ventas",
+            allowed_extensions= ["Archivos CSV","*csv"]
+        )
+    
     def abrir_dialogo_stock(e):
         try:
             import tkinter as tk
@@ -344,7 +354,8 @@ def crear_vista_dashboard(page: ft.Page):
         texto_estado_stock,
         texto_estado,
         texto_parametros,
-        abrir_dialogo_ventas,
+        abrir_explorador_ventas,
+        #abrir_dialogo_ventas,#Añadiendo comentario
         abrir_dialogo_stock,
         procesar_prediccion,
     )
