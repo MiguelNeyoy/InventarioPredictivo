@@ -156,7 +156,8 @@ def crear_vista_dashboard(page: ft.Page):
         # El resultado se obtiene directamente del método await
         await file_picker.pick_files(
             dialog_title= "Seleccionar archivo de ventas",
-            allowed_extensions= ["Archivos CSV","*csv"],
+            file_type= ft.FilePickerFileType.CUSTOM,
+            allowed_extensions= ["csv","CSV"],
             initial_directory= _back_path
         )
     
