@@ -8,6 +8,8 @@ import asyncio
 _back_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "Back"))
 if _back_path not in sys.path:
     sys.path.insert(0, _back_path)
+    
+_archivos_csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "ArchivosCVS"))
 
 from validador import ValidadorDatos
 from predictor import MotorInventario
@@ -40,6 +42,7 @@ app_state = AppState()
 def crear_vista_dashboard(page: ft.Page):
     
     file_picker = ft.FilePicker()
+    
     
     global app_state
 
@@ -151,16 +154,29 @@ def crear_vista_dashboard(page: ft.Page):
             page.update()
         except Exception as tk_err:
             print(f"[ERROR tkinter ventas] {tk_err}")
+    
+    #Permite guardar el archivo a escoger al seleccionar el cvs
+    async def archivo_cvs_venta(e):
+        if e.files:
+        
+            ruta = e.files [0].path
+            nombre = e.files [0].name
             
+            app_state.ruta_archivo_ventas = ruta
+            texto_estado_ventas.value = f"Archivo de ventas: {nombre}"
+            texto_estado_ventas.color = ft.Colors.GREEN_600
+            page.update()
+    
+                        
     async def abrir_explorador_ventas(e):
-        # El resultado se obtiene directamente del método await
+        
         await file_picker.pick_files(
             dialog_title= "Seleccionar archivo de ventas",
+            initial_directory= _archivos_csv_path,
             file_type= ft.FilePickerFileType.CUSTOM,
-            allowed_extensions= ["csv","CSV"],
-            initial_directory= _back_path
+            allowed_extensions= ["csv"]
         )
-    
+            
     def abrir_dialogo_stock(e):
         try:
             import tkinter as tk
