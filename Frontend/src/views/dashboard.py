@@ -164,6 +164,8 @@ def crear_vista_dashboard(page: ft.Page):
             allowed_extensions= ["csv"] )
         
         app_state.ruta_archivo_ventas = (", ".join( map( lambda f: f.path, archivo_cvs ) ) )
+        texto_estado_ventas.value = (", ".join( map( lambda f: f.name, archivo_cvs ) ) )
+        texto_estado_ventas.color = ft.Colors.GREEN_600
             
     def abrir_dialogo_stock(e):
         try:
