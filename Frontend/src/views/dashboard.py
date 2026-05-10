@@ -144,29 +144,8 @@ def crear_vista_dashboard(page: ft.Page):
         app_state.ruta_archivo_ventas = (", ".join( map( lambda f: f.path, archivo_cvs ) ) )
         texto_estado_ventas.value = (", ".join( map( lambda f: f.name, archivo_cvs ) ) )
         texto_estado_ventas.color = ft.Colors.GREEN_600
-            
-    def abrir_dialogo_stock(e):
-        try:
-            import tkinter as tk
-            from tkinter import filedialog
-            root = tk.Tk()
-            root.withdraw()
-            root.update()
-            file_path = filedialog.askopenfilename(
-                title="Seleccionar archivo de stock",
-                filetypes=[("Archivos CSV", "*.csv"), ("Archivos Excel", "*.xlsx")]
-            )
-            root.quit()
-            root.destroy()
-            if file_path:
-                import os
-                app_state.ruta_archivo_stock = file_path
-                texto_estado_stock.value = f"Archivo de stock: {os.path.basename(file_path)}"
-                texto_estado_stock.color = ft.Colors.GREEN_600
-            page.update()
-        except Exception as tk_err:
-            print(f"[ERROR tkinter stock] {tk_err}")
-            
+        
+        
     async def abrir_explorador_stock(e):
         
         archivo_cvs = await file_picker.pick_files(
@@ -354,7 +333,6 @@ def crear_vista_dashboard(page: ft.Page):
         texto_parametros,
         abrir_explorador_ventas,
         abrir_explorador_stock,
-        #abrir_dialogo_stock,
         procesar_prediccion,
     )
 
