@@ -17,5 +17,4 @@ def main(page: ft.Page):
 
     page.add(crear_vista_dashboard(page))
 
-
 ft.run(main)

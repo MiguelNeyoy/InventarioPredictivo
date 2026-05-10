@@ -9,7 +9,7 @@ _back_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..",
 if _back_path not in sys.path:
     sys.path.insert(0, _back_path)
     
-_archivos_csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "ArchivosCVS"))
+_archivos_csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "ArchivosCSV"))
 
 from validador import ValidadorDatos
 from predictor import MotorInventario
@@ -135,27 +135,27 @@ def crear_vista_dashboard(page: ft.Page):
 
     async def abrir_explorador_ventas(e):
         
-        archivo_cvs = await file_picker.pick_files(
+        archivo_csv = await file_picker.pick_files(
             dialog_title= "Seleccionar archivo de ventas",
             initial_directory= _archivos_csv_path,
             file_type= ft.FilePickerFileType.CUSTOM,
             allowed_extensions= ["csv"] )
         
-        app_state.ruta_archivo_ventas = (", ".join( map( lambda f: f.path, archivo_cvs ) ) )
-        texto_estado_ventas.value = (", ".join( map( lambda f: f.name, archivo_cvs ) ) )
+        app_state.ruta_archivo_ventas = (", ".join( map( lambda f: f.path, archivo_c ) ) )
+        texto_estado_ventas.value = (", ".join( map( lambda f: f.name, archivo_csv ) ) )
         texto_estado_ventas.color = ft.Colors.GREEN_600
         
         
     async def abrir_explorador_stock(e):
         
-        archivo_cvs = await file_picker.pick_files(
+        archivo_csv = await file_picker.pick_files(
             dialog_title= "Seleccionar archivo de stock",
             initial_directory= _archivos_csv_path,
             file_type= ft.FilePickerFileType.CUSTOM,
             allowed_extensions= ["csv"] )
         
-        app_state.ruta_archivo_stock = (", ".join( map( lambda f: f.path, archivo_cvs ) ) )
-        texto_estado_stock.value = (", ".join( map( lambda f: f.name, archivo_cvs ) ) )
+        app_state.ruta_archivo_stock = (", ".join( map( lambda f: f.path, archivo_csv ) ) )
+        texto_estado_stock.value = (", ".join( map( lambda f: f.name, archivo_csv ) ) )
         texto_estado_stock.color = ft.Colors.GREEN_600
             
     def actualizar_tabla(df_alertas):
