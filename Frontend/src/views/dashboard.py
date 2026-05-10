@@ -157,12 +157,13 @@ def crear_vista_dashboard(page: ft.Page):
     
     async def abrir_explorador_ventas(e):
         
-        await file_picker.pick_files(
+        archivo_cvs = await file_picker.pick_files(
             dialog_title= "Seleccionar archivo de ventas",
             initial_directory= _archivos_csv_path,
             file_type= ft.FilePickerFileType.CUSTOM,
-            allowed_extensions= ["csv"]
-        )
+            allowed_extensions= ["csv"] )
+        
+        app_state.ruta_archivo_ventas = (", ".join( map( lambda f: f.path, archivo_cvs ) ) )
             
     def abrir_dialogo_stock(e):
         try:
