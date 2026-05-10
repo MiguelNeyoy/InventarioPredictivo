@@ -155,19 +155,6 @@ def crear_vista_dashboard(page: ft.Page):
         except Exception as tk_err:
             print(f"[ERROR tkinter ventas] {tk_err}")
     
-    #Permite guardar el archivo a escoger al seleccionar el cvs
-    async def archivo_cvs_venta(e):
-        if e.files:
-        
-            ruta = e.files [0].path
-            nombre = e.files [0].name
-            
-            app_state.ruta_archivo_ventas = ruta
-            texto_estado_ventas.value = f"Archivo de ventas: {nombre}"
-            texto_estado_ventas.color = ft.Colors.GREEN_600
-            page.update()
-    
-                        
     async def abrir_explorador_ventas(e):
         
         await file_picker.pick_files(
