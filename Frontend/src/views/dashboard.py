@@ -141,7 +141,7 @@ def crear_vista_dashboard(page: ft.Page):
             file_type= ft.FilePickerFileType.CUSTOM,
             allowed_extensions= ["csv"] )
         
-        app_state.ruta_archivo_ventas = (", ".join( map( lambda f: f.path, archivo_c ) ) )
+        app_state.ruta_archivo_ventas = (", ".join( map( lambda f: f.path, archivo_csv ) ) )
         texto_estado_ventas.value = (", ".join( map( lambda f: f.name, archivo_csv ) ) )
         texto_estado_ventas.color = ft.Colors.GREEN_600
         
