@@ -133,28 +133,6 @@ def crear_vista_dashboard(page: ft.Page):
 
     graf_tendencia, graf_barras = actualizar_graficos()
 
-    def abrir_dialogo_ventas(e):
-        try:
-            import tkinter as tk
-            from tkinter import filedialog
-            root = tk.Tk()
-            root.withdraw()
-            root.update()
-            file_path = filedialog.askopenfilename(
-                title="Seleccionar archivo de ventas",
-                filetypes=[("Archivos CSV", "*.csv"), ("Archivos Excel", "*.xlsx")]
-            )
-            root.quit()
-            root.destroy()
-            if file_path:
-                import os
-                app_state.ruta_archivo_ventas = file_path
-                texto_estado_ventas.value = f"Archivo de ventas: {os.path.basename(file_path)}"
-                texto_estado_ventas.color = ft.Colors.GREEN_600
-            page.update()
-        except Exception as tk_err:
-            print(f"[ERROR tkinter ventas] {tk_err}")
-    
     async def abrir_explorador_ventas(e):
         
         archivo_cvs = await file_picker.pick_files(
@@ -362,8 +340,7 @@ def crear_vista_dashboard(page: ft.Page):
         texto_estado_stock,
         texto_estado,
         texto_parametros,
-        abrir_explorador_ventas,#Nueva funcion que abre el explorador de archivos
-        #abrir_dialogo_ventas,#Funcion anterior que abria el explorador de archivos
+        abrir_explorador_ventas,
         abrir_dialogo_stock,
         procesar_prediccion,
     )
