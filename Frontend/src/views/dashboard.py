@@ -166,7 +166,19 @@ def crear_vista_dashboard(page: ft.Page):
             page.update()
         except Exception as tk_err:
             print(f"[ERROR tkinter stock] {tk_err}")
-
+            
+    async def abrir_explorador_stock(e):
+        
+        archivo_cvs = await file_picker.pick_files(
+            dialog_title= "Seleccionar archivo de stock",
+            initial_directory= _archivos_csv_path,
+            file_type= ft.FilePickerFileType.CUSTOM,
+            allowed_extensions= ["csv"] )
+        
+        app_state.ruta_archivo_stock = (", ".join( map( lambda f: f.path, archivo_cvs ) ) )
+        texto_estado_stock.value = (", ".join( map( lambda f: f.name, archivo_cvs ) ) )
+        texto_estado_stock.color = ft.Colors.GREEN_600
+            
     def actualizar_tabla(df_alertas):
         nuevas_filas = []
         for _, row in df_alertas.iterrows():
@@ -341,7 +353,8 @@ def crear_vista_dashboard(page: ft.Page):
         texto_estado,
         texto_parametros,
         abrir_explorador_ventas,
-        abrir_dialogo_stock,
+        abrir_explorador_stock,
+        #abrir_dialogo_stock,
         procesar_prediccion,
     )
 
