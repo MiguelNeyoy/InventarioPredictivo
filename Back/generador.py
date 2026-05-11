@@ -1,63 +1,71 @@
 import pandas as pd
 import numpy as np
+import random
 
-#  Definimos el periodo de tiempo (2 años de historia hasta el día de hoy)
-fechas = pd.date_range(start="2024-01-01", end="2026-02-27")
-
-# Elegimos productos realistas para la costa
-productos = ["Cerveza Pacifico", "Bloqueador Solar", "Hielo en Bolsa"]
-
-# Aquí guardaremos todos los registros antes de hacer el Excel
-registros_ventas = []
-
-# Simulamos las ventas día por día, producto por producto
-for producto in productos:
+# Catálogo realista categorizado por comportamiento de venta
+productos = {
+    # ROTACIÓN ALTA: Se venden todos los días (Accesorios baratos)
+    "Cable de Red Cat6 3m": {"tipo": "alta", "min": 3, "max": 12}, # Reemplazo de HDMI
+    "Pasta Térmica Arctic": {"tipo": "alta", "min": 1, "max": 6},
+    "Memoria USB 64GB": {"tipo": "alta", "min": 4, "max": 10},
     
-    # Cada producto tiene una venta base diferente
-    if producto == "Cerveza Pacifico":
-        venta_base = 80
-    elif producto == "Bloqueador Solar":
-        venta_base = 30
-    else:
-        venta_base = 50
+    # ROTACIÓN MEDIA: Se venden a veces (Componentes)
+    "Memoria RAM 16GB DDR4": {"tipo": "media", "probabilidad_venta": 0.6, "cantidad": [1, 2]},
+    "SSD 1TB": {"tipo": "media", "probabilidad_venta": 0.5, "cantidad": [1, 2]},
+    "Monitor 24 Pulgadas": {"tipo": "media", "probabilidad_venta": 0.4, "cantidad": [1]},
+    
+    # ROTACIÓN BAJA: Caros, se venden muy esporádicamente (Laptops, Gráficas)
+    "Tarjeta Gráfica RTX 4060": {"tipo": "baja", "probabilidad_venta": 0.10}, 
+    "Laptop Gaming Asus": {"tipo": "baja", "probabilidad_venta": 0.08},       
+    "Laptop Dell Inspiron": {"tipo": "baja", "probabilidad_venta": 0.15},     
+    "Procesador Ryzen 5": {"tipo": "baja", "probabilidad_venta": 0.20}        
+}
 
+fechas = pd.date_range(start="2024-01-01", end="2026-03-14")
+registros = []
+
+for nombre_prod, params in productos.items():
     for fecha in fechas:
-        # A) Añadimos ruido aleatorio (las ventas nunca son exactamente iguales)
-        venta_del_dia = venta_base + np.random.randint(-15, 20)
+        venta_dia = 0
         
-        # B) Efecto Fin de Semana (Viernes, Sábado y Domingo se vende más)
-        if fecha.weekday() >= 4: # 4 es Viernes, 5 Sábado, 6 Domingo
-            venta_del_dia += 40
+        # LÓGICA DE VENTA SEGÚN EL TIPO DE PRODUCTO
+        if params["tipo"] == "alta":
+            # Siempre se vende algo, cantidad aleatoria
+            venta_dia = random.randint(params["min"], params["max"])
             
-        # C) Efecto Carnaval (Picos masivos a finales de febrero)
-        if fecha.month == 2 and 15 <= fecha.day <= 25:
-            venta_del_dia += 120
-            
-        # D) Efecto Semana Santa (Picos masivos en abril)
-        if fecha.month == 4 and 1 <= fecha.day <= 15:
-            venta_del_dia += 150
-            
-        # Asegurarnos de que no existan ventas negativas por el ruido aleatorio
-        venta_del_dia = max(0, venta_del_dia)
+        elif params["tipo"] == "media":
+            # A veces no se vende nada en todo el día
+            if random.random() <= params["probabilidad_venta"]:
+                venta_dia = random.choice(params["cantidad"])
+                
+        elif params["tipo"] == "baja":
+            # Casi nunca se vende. Si se vende, es solo 1 unidad.
+            if random.random() <= params["probabilidad_venta"]:
+                venta_dia = 1
+
+        # EFECTOS ESTACIONALES (Solo aplican si hubo al menos 1 venta o forzamos tráfico)
         
-        # Guardamos la fila
-        registros_ventas.append({
-            "Fecha": fecha.strftime("%Y-%m-%d"),
-            "Producto": producto,
-            "Ventas": venta_del_dia
-        })
+        # Efecto Quincena (Días 15 y 30/31 hay dinero, sube probabilidad de Laptops)
+        if fecha.day in [15, 16, 30, 31] and params["tipo"] == "baja":
+            if random.random() <= 0.30: # La probabilidad sube a 30% en quincena
+                venta_dia = 1
 
-#  Convertimos la lista en una tabla (DataFrame)
-df_maestro = pd.DataFrame(registros_ventas)
+        # Efecto Buen Fin / Navidad (Nov-Dic)
+        if fecha.month in [11, 12]:
+            if params["tipo"] == "alta":
+                venta_dia = int(venta_dia * 1.5)
+            elif params["tipo"] == "baja" and random.random() <= 0.25: # Más Laptops en Navidad
+                venta_dia = random.randint(1, 2)
 
-#  EL TOQUE DE REALIDAD: Mezclamos las filas aleatoriamente
-# Esto simula un registro real donde la gente compra a distintas horas
-df_maestro = df_maestro.sample(frac=1).reset_index(drop=True)
+        # Solo guardamos si se vendió algo
+        if venta_dia > 0:
+            registros.append({
+                "Fecha": fecha.strftime("%Y-%m-%d"),
+                "Producto": nombre_prod,
+                "Cantidad": venta_dia
+            })
 
-#  Exportamos a CSV
-df_maestro.to_csv("ventas_totales.csv", index=False)
+df_historico = pd.DataFrame(registros)
+df_historico = df_historico.sort_values(by="Fecha").reset_index(drop=True)
 
-print("¡Éxito! Archivo 'ventas_totales.csv' generado correctamente.")
-print(f"Total de registros simulados: {len(df_maestro)}")
-print("\nPrimeras 5 filas del archivo revuelto:")
-print(df_maestro.head())
+df_historico.to_csv("historico_maestro.csv", index=False)
