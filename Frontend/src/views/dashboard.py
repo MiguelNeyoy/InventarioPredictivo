@@ -37,6 +37,8 @@ class AppState:
 
 
 app_state = AppState()
+boton_exportar_ref = None
+exportador_ref = None
 
 
 def crear_vista_dashboard(page: ft.Page):
@@ -158,6 +160,15 @@ def crear_vista_dashboard(page: ft.Page):
         texto_estado_stock.value = (", ".join( map( lambda f: f.name, archivo_csv ) ) )
         texto_estado_stock.color = ft.Colors.GREEN_600
             
+    def exportar_csv(e):
+        global exportador_ref
+        if app_state.predicciones is not None:
+            exportador_ref = ExportadorDatos()
+            ruta = exportador_ref.exportar_a_csv(app_state.predicciones, "reporte_inventario.csv")
+            texto_estado.value = f"Archivo exportado: reporte_inventario.csv"
+            texto_estado.color = ft.Colors.GREEN_600
+            page.update()
+
     def actualizar_tabla(df_alertas):
         nuevas_filas = []
         for _, row in df_alertas.iterrows():
@@ -244,6 +255,9 @@ def crear_vista_dashboard(page: ft.Page):
         actualizar_tabla(df_alertas)
         kpi_container.controls = crear_kpi_cards(df_metricas).controls
 
+        if boton_exportar_ref:
+            boton_exportar_ref.disabled = False
+
         print("[DEBUG] Actualizando gráficos (DESACTIVADO TEMPORALMENTE)")
         # Comentado para diagnosticar alto CPU
         # try:
@@ -292,9 +306,6 @@ def crear_vista_dashboard(page: ft.Page):
         logica = LogicaNegocio()
         df_alertas = logica.evaluar_stock(df_predicciones, stock_dict, umbral_seguridad)
 
-        exportador = ExportadorDatos()
-        exportador.exportar_a_csv(df_alertas, "reporte_inventario.csv")
-
         return df_alertas, df_metricas, df_unificado, df_predicciones
 
     def _actualizar_graficos_thread(df_hist, df_alertas):
@@ -323,7 +334,8 @@ def crear_vista_dashboard(page: ft.Page):
     sidebar = crear_sidebar(page, mostrar_panel, mostrar_reportes)
     sidebar_content = sidebar.content
 
-    upload = crear_upload_panel(
+    global boton_exportar_ref
+    upload, boton_exportar_ref = crear_upload_panel(
         campo_dias_prediccion,
         slider_umbral,
         texto_umbral_label,
@@ -334,6 +346,7 @@ def crear_vista_dashboard(page: ft.Page):
         abrir_explorador_ventas,
         abrir_explorador_stock,
         procesar_prediccion,
+        exportar_csv,
     )
 
     header = ft.Container(
