@@ -278,6 +278,11 @@ def crear_vista_dashboard(page: ft.Page):
         print("[DEBUG] Procesamiento completado")
 
     def _procesar_prediccion_sync(ruta_ventas, ruta_stock, dias_prediccion, umbral_seguridad):
+        from Back.generadores import generar_historico, generar_ventas_mes, generar_stock
+        generar_historico()
+        generar_ventas_mes()
+        generar_stock()
+
         validador = ValidadorDatos()
         df_ventas = pd.read_csv(ruta_ventas)
         df_unificado, df_usuario = validador.validar_y_limpiar(df_ventas)
