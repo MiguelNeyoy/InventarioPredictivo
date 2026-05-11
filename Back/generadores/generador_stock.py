@@ -3,21 +3,21 @@ import random
 import os
 
 productos_stock = {
-    "Cable de Red Cat6 3m": {"tipo": "alta", "min": 5, "max": 20},
-    "Pasta Térmica Arctic": {"tipo": "alta", "min": 3, "max": 20},
-    "Memoria USB 64GB": {"tipo": "alta", "min": 3, "max": 10},
-    "Memoria RAM 16GB": {"tipo": "media", "min": 5, "max": 10},
-    "SSD 1TB": {"tipo": "media", "min": 2, "max": 6},
-    "Monitor 24 pulgadas": {"tipo": "media", "min": 1, "max": 5},
-    "Tarjeta Gráfica RTX 4060": {"tipo": "baja", "min": 1, "max": 2},
-    "Laptop Gaming Asus": {"tipo": "baja", "min": 2, "max": 7},
-    "Laptop Dell Inspiron": {"tipo": "baja", "min": 1, "max": 8},
-    "Procesador Ryzen 5": {"tipo": "baja", "min": 2, "max": 5}
+    "Cable de Red Cat6 3m": {"min": 50, "max": 150},
+    "Pasta Térmica Arctic": {"min": 20, "max": 80},
+    "Memoria USB 64GB": {"min": 30, "max": 100},
+    "Memoria RAM 16GB DDR4": {"min": 15, "max": 50},
+    "Disco Duro SSD 1TB": {"min": 10, "max": 40},
+    "Monitor 24 Pulgadas": {"min": 5, "max": 25},
+    "Tarjeta Gráfica RTX 4060": {"min": 3, "max": 15},
+    "Laptop Gaming Asus": {"min": 2, "max": 10},
+    "Laptop Dell Inspiron": {"min": 5, "max": 20},
+    "Procesador Ryzen 5": {"min": 5, "max": 25}
 }
 
 ruta_salida = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "ArchivosCSV"
+    os.path.dirname(os.path.abspath(__file__)),
+    "..", "..", "ArchivosCSV"
 )
 
 def generar_stock():

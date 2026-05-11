@@ -7,9 +7,9 @@ productos = {
     "Cable de Red Cat6 3m": {"lam": 1.5},
     "Pasta Térmica Arctic": {"lam": 1.5},
     "Memoria USB 64GB": {"lam": 0.9},
-    "Memoria RAM 16GB": {"lam": 0.20},
-    "SSD 1TB": {"lam": 0.3},
-    "Monitor 24 pulgadas": {"lam": 0.1},
+    "Memoria RAM 16GB DDR4": {"lam": 0.20},
+    "Disco Duro SSD 1TB": {"lam": 0.3},
+    "Monitor 24 Pulgadas": {"lam": 0.1},
     "Tarjeta Gráfica RTX 4060": {"lam": 0.15},
     "Laptop Gaming Asus": {"lam": 0.155},
     "Laptop Dell Inspiron": {"lam": 0.2},
@@ -17,8 +17,8 @@ productos = {
 }
 
 ruta_salida = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "ArchivosCSV"
+    os.path.dirname(os.path.abspath(__file__)),
+    "..", "..", "ArchivosCSV"
 )
 
 def obtener_mes_actual():
@@ -33,30 +33,6 @@ def obtener_mes_actual():
 def obtener_nombre_archivo():
     mes, año = obtener_mes_actual()
     return f"ventas_{mes}_{año}.csv"
-
-def obtener_ultimo_mes_archivo():
-    if not os.path.exists(ruta_salida):
-        return None, None
-
-    archivos = [f for f in os.listdir(ruta_salida) if f.startswith("ventas_") and f.endswith(".csv")]
-    if not archivos:
-        return None, None
-
-    ultimo = sorted(archivos)[-1]
-    partes = ultimo.replace("ventas_", "").replace(".csv", "").split("_")
-    return partes[0], int(partes[1])
-
-def necesita_regenerar():
-    mes_actual, año_actual = obtener_mes_actual()
-    ultimo_mes, ultimo_año = obtener_ultimo_mes_archivo()
-
-    if ultimo_mes is None:
-        return True
-
-    if ultimo_mes != mes_actual or ultimo_año != año_actual:
-        return True
-
-    return False
 
 def obtener_lambda_ajustado(producto, params, fecha):
     lam = params["lam"]
@@ -73,17 +49,11 @@ def obtener_lambda_ajustado(producto, params, fecha):
     return lam
 
 def generar_ventas_mes():
-    if not necesita_regenerar():
-        nombre_archivo = obtener_nombre_archivo()
-        ruta_completa = os.path.join(ruta_salida, nombre_archivo)
-        print(f"Ya existe archivo del mes actual: {ruta_completa}")
-        return ruta_completa
+    nombre_archivo = obtener_nombre_archivo()
+    ruta_completa = os.path.join(ruta_salida, nombre_archivo)
 
     if not os.path.exists(ruta_salida):
         os.makedirs(ruta_salida)
-
-    nombre_archivo = obtener_nombre_archivo()
-    ruta_completa = os.path.join(ruta_salida, nombre_archivo)
 
     now = datetime.now()
     dias_mes = pd.date_range(start=now.replace(day=1), periods=now.day, freq="D")

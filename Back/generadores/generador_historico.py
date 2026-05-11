@@ -7,9 +7,9 @@ productos = {
     "Cable de Red Cat6 3m": {"lam": 1.5},
     "Pasta Térmica Arctic": {"lam": 1.5},
     "Memoria USB 64GB": {"lam": 0.9},
-    "Memoria RAM 16GB": {"lam": 0.20},
-    "SSD 1TB": {"lam": 0.3},
-    "Monitor 24 pulgadas": {"lam": 0.1},
+    "Memoria RAM 16GB DDR4": {"lam": 0.20},
+    "Disco Duro SSD 1TB": {"lam": 0.3},
+    "Monitor 24 Pulgadas": {"lam": 0.1},
     "Tarjeta Gráfica RTX 4060": {"lam": 0.15},
     "Laptop Gaming Asus": {"lam": 0.155},
     "Laptop Dell Inspiron": {"lam": 0.2},
@@ -17,8 +17,8 @@ productos = {
 }
 
 ruta_salida = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "ArchivosCSV"
+    os.path.dirname(os.path.abspath(__file__)),
+    "..", "..", "ArchivosCSV"
 )
 
 def obtener_nombre_historico():
