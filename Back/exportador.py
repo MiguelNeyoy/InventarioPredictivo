@@ -10,7 +10,8 @@ class ExportadorDatos:
     def __init__(self, ruta_default=None):
         if ruta_default is None:
             base_dir = os.path.dirname(os.path.abspath(__file__))
-            self.ruta_default = os.path.join(base_dir, "exports")
+            project_root = os.path.dirname(os.path.dirname(base_dir))
+            self.ruta_default = os.path.join(project_root, "ArchivosCSV")
         else:
             self.ruta_default = ruta_default
 
@@ -32,6 +33,9 @@ class ExportadorDatos:
             nombre_archivo += ".csv"
 
         ruta_completa = os.path.join(self.ruta_default, nombre_archivo)
+
+        if os.path.exists(ruta_completa):
+            os.remove(ruta_completa)
 
         df.to_csv(ruta_completa, index=False, encoding="utf-8-sig")
 
