@@ -91,7 +91,7 @@ def crear_vista_dashboard(page: ft.Page):
         value=0,
         width=200,
     )
-    texto_umbral = ft.Text("Umbral de seguridad: 0%")
+    
     texto_umbral_label = ft.Text("Umbral de seguridad: 0%")
 
     def actualizar_label_umbral(e):
