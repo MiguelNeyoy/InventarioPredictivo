@@ -9,8 +9,8 @@ def crear_upload_panel(
     texto_estado_stock,
     texto_estado,
     texto_parametros,
-    abrir_dialogo_ventas,
-    abrir_dialogo_stock,
+    abrir_explorador_ventas,
+    abrir_explorador_stock,
     procesar_prediccion,
     exportar_csv=None,
 ):
@@ -41,7 +41,7 @@ def crear_upload_panel(
                     content=ft.Row(
                         [ft.Icon(ft.Icons.UPLOAD_FILE), ft.Text("Cargar Archivo de Ventas")]
                     ),
-                    on_click=abrir_dialogo_ventas,
+                    on_click=abrir_explorador_ventas,
                 ),
                 texto_estado_ventas,
                 ft.Container(height=10),
@@ -51,7 +51,7 @@ def crear_upload_panel(
                     ),
                     color=ft.Colors.WHITE,
                     bgcolor=ft.Colors.BLUE_600,
-                    on_click=abrir_dialogo_stock,
+                    on_click=abrir_explorador_stock,
                 ),
                 texto_estado_stock,
                 ft.Container(height=15),
