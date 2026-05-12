@@ -195,6 +195,7 @@ def crear_vista_dashboard(page: ft.Page):
 
     async def procesar_prediccion(e):
         print("[DEBUG] Procesar prediccion iniciado")
+        '''
         if not app_state.ruta_archivo_ventas:
             mostrar_error("Debe seleccionar un archivo de ventas")
             return
@@ -202,7 +203,7 @@ def crear_vista_dashboard(page: ft.Page):
         if not app_state.ruta_archivo_stock:
             mostrar_error("Debe seleccionar un archivo de stock (obligatorio)")
             return
-
+        '''
         try:
             dias = int(campo_dias_prediccion.value)
             if dias <= 0 or dias > 365:
@@ -211,7 +212,7 @@ def crear_vista_dashboard(page: ft.Page):
         except ValueError:
             mostrar_error("Los días deben ser un número válido")
             return
-
+        
         loader_overlay.visible = True
         indicador_carga.visible = True
         indicador_carga.scale = 2
