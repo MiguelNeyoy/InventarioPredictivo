@@ -14,14 +14,14 @@ def crear_upload_panel(
     procesar_prediccion,
     exportar_csv=None,
 ):
-    boton_exportar = ft.ElevatedButton(
+    boton_exportar = ft.Button(
         content=ft.Row([ft.Icon(ft.Icons.DOWNLOAD), ft.Text("Exportar CSV")]),
         bgcolor=ft.Colors.BLUE_600,
         color=ft.Colors.WHITE,
-        on_click=exportar_csv,
+        on_click = exportar_csv,
         width=150,
         height=40,
-        disabled=True,
+        disabled = True,
     )
 
     panel = ft.Container(
@@ -37,7 +37,7 @@ def crear_upload_panel(
                 ft.Container(height=10),
                 ft.Row([slider_umbral, texto_umbral_label], spacing=10),
                 ft.Container(height=15),
-                ft.ElevatedButton(
+                ft.Button(
                     content=ft.Row(
                         [ft.Icon(ft.Icons.UPLOAD_FILE), ft.Text("Cargar Archivo de Ventas")]
                     ),
@@ -45,7 +45,7 @@ def crear_upload_panel(
                 ),
                 texto_estado_ventas,
                 ft.Container(height=10),
-                ft.ElevatedButton(
+                ft.Button(
                     content=ft.Row(
                         [ft.Icon(ft.Icons.INVENTORY_2), ft.Text("Cargar Archivo de Stock (OBLIGATORIO)")]
                     ),
@@ -57,7 +57,7 @@ def crear_upload_panel(
                 ft.Container(height=15),
                 ft.Row(
                     [
-                        ft.ElevatedButton(
+                        ft.Button(
                             content=ft.Row([ft.Icon(ft.Icons.PLAY_ARROW), ft.Text("Procesar Predicción")]),
                             bgcolor=ft.Colors.GREEN_600,
                             color=ft.Colors.WHITE,
