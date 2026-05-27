@@ -31,14 +31,22 @@ class AppState:
         self.df_historico = None
         self.df_usuario = None
         self.df_pred_bruto = None
-        self.ruta_archivo_ventas = ""
-        self.ruta_archivo_stock = ""
+        
+        # Rutas por defecto inteligentes en la carpeta ArchivosCSV
+        default_ventas = os.path.join(_archivos_csv_path, "ventas_mes_actual.csv")
+        default_stock = os.path.join(_archivos_csv_path, "stock_actual.csv")
+        
+        self.ruta_archivo_ventas = default_ventas if os.path.exists(default_ventas) else ""
+        self.ruta_archivo_stock = default_stock if os.path.exists(default_stock) else ""
         self.dias_prediccion = 0
         self.umbral_seguridad = 0
         self.procesando = False
+        self.estrategias = {}  # Mapeo personalizado {"Producto": "MTS"|"MTO"|"SVC"}
+        self.stock_dict = {}   # Diccionario de stock en caché
 
 
 app_state = AppState()
+
 boton_exportar_ref = None
 exportador_ref = None
 
@@ -113,6 +121,7 @@ def crear_vista_dashboard(page: ft.Page):
     tabla_datos = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Producto")),
+            ft.DataColumn(ft.Text("Estrategia")),
             ft.DataColumn(ft.Text("Venta Estimada")),
             ft.DataColumn(ft.Text("Stock Actual")),
             ft.DataColumn(ft.Text("Cant. Comprar")),
@@ -171,10 +180,46 @@ def crear_vista_dashboard(page: ft.Page):
             texto_estado.color = ft.Colors.GREEN_600
             page.update()
 
+    def cambiar_estrategia_producto(producto, nueva_estrategia):
+        app_state.estrategias[producto] = nueva_estrategia
+        
+        # Recalcular reglas de negocio al vuelo reactivamente en memoria
+        logica = LogicaNegocio()
+        df_alertas_nuevo = logica.evaluar_stock(
+            app_state.df_pred_bruto,
+            app_state.stock_dict,
+            app_state.umbral_seguridad,
+            estrategias_dict=app_state.estrategias
+        )
+        
+        app_state.predicciones = df_alertas_nuevo
+        actualizar_tabla(df_alertas_nuevo)
+        page.update()
+
     def actualizar_tabla(df_alertas):
         nuevas_filas = []
         for _, row in df_alertas.iterrows():
+            articulo = row.get("Producto", "")
             alerta = row.get("Alerta_Surtir", False)
+            estrategia_actual = row.get("Estrategia", "MTS")
+            
+            # Crear ft.Dropdown interactivo para cambiar la estrategia al vuelo
+            dropdown_estrategia = ft.Dropdown(
+                value=estrategia_actual,
+                width=140,
+                height=40,
+                text_size=12,
+                border_color=ft.Colors.BLUE_GREY_100,
+                content_padding=5,
+                options=[
+                    ft.dropdown.Option("MTS", "MTS (Stock)"),
+                    ft.dropdown.Option("MTO", "MTO (Pedido)"),
+                    ft.dropdown.Option("SVC", "SVC (Servicio)"),
+                ]
+            )
+            dropdown_estrategia.on_change = lambda e, art=articulo: cambiar_estrategia_producto(art, e.control.value)
+
+            
             color = ft.Colors.RED_50 if alerta else ft.Colors.GREEN_50
             alerta_icono = (
                 ft.Icon(ft.Icons.WARNING, color=ft.Colors.RED)
@@ -184,7 +229,8 @@ def crear_vista_dashboard(page: ft.Page):
             nuevas_filas.append(
                 ft.DataRow(
                     cells=[
-                        ft.DataCell(ft.Text(str(row.get("Producto", "")))),
+                        ft.DataCell(ft.Text(str(articulo))),
+                        ft.DataCell(dropdown_estrategia),
                         ft.DataCell(ft.Text(str(row.get("Venta_Estimada", 0)))),
                         ft.DataCell(ft.Text(str(row.get("Stock_Actual", 0)))),
                         ft.DataCell(ft.Text(str(row.get("Cantidad_A_Comprar", 0)))),
@@ -283,20 +329,52 @@ def crear_vista_dashboard(page: ft.Page):
         print("[DEBUG] Procesamiento completado")
 
     def _procesar_prediccion_sync(ruta_ventas, ruta_stock, dias_prediccion, umbral_seguridad):
-        from Back.generadores import generar_historico, generar_ventas_mes, generar_stock
-        generar_historico()
-        generar_ventas_mes()
-        generar_stock()
+        # ⚡ DETECTOR DE MODIFICACIÓN INTELIGENTE DE EXCEL
+        excel_path = os.path.join(_archivos_csv_path, "VENTAS PCYLAP 2023.xlsx")
+        path_hw = os.path.join(_archivos_csv_path, "historico_maestro.csv")
+        path_actual = os.path.join(_archivos_csv_path, "ventas_mes_actual.csv")
+        
+        necesita_etl = False
+        
+        if not os.path.exists(path_hw) or not os.path.exists(path_actual):
+            print("[DASHBOARD] Los CSVs del ETL no existen. Ejecutando ETL por primera vez...")
+            necesita_etl = True
+        elif os.path.exists(excel_path):
+            excel_mtime = os.path.getmtime(excel_path)
+            csv_mtime = min(os.path.getmtime(path_hw), os.path.getmtime(path_actual))
+            if excel_mtime > csv_mtime:
+                print("[DASHBOARD] Se detectaron cambios en el Excel. Ejecutando ETL para sincronizar...")
+                necesita_etl = True
+            else:
+                print("[DASHBOARD] El Excel no ha cambiado. Cargando datos procesados desde el caché directamente (0.1s)...")
+        
+        if necesita_etl:
+            from Back.generadores import ejecutar_etl
+            ejecutar_etl()
+            
+        # Si la ruta_ventas original no estaba definida, usar el valor por defecto recién procesado
+        if not ruta_ventas or not os.path.exists(ruta_ventas):
+            ruta_ventas = path_actual
+            app_state.ruta_archivo_ventas = path_actual
 
         validador = ValidadorDatos()
         df_ventas = pd.read_csv(ruta_ventas)
         df_unificado, df_usuario = validador.validar_y_limpiar(df_ventas)
 
-        df_stock = pd.read_csv(ruta_stock)
-        stock_col = "Stock" if "Stock" in df_stock.columns else "Stock_Actual"
-        if "Producto" not in df_stock.columns or stock_col not in df_stock.columns:
-            raise ValueError(f"El archivo de stock debe tener columnas 'Producto' y '{stock_col}'")
-        stock_dict = dict(zip(df_stock["Producto"], df_stock[stock_col]))
+
+        # Leer stock de forma segura (con fallback a diccionario vacío si no se suministra o tiene fallos)
+        stock_dict = {}
+        if ruta_stock:
+            try:
+                df_stock = pd.read_csv(ruta_stock)
+                stock_col = "Stock" if "Stock" in df_stock.columns else "Stock_Actual"
+                if "Producto" in df_stock.columns and stock_col in df_stock.columns:
+                    stock_dict = dict(zip(df_stock["Producto"], df_stock[stock_col]))
+            except Exception as e:
+                print(f"[WARN] No se pudo leer el archivo de stock: {e}")
+        
+        # Guardar en caché del AppState
+        app_state.stock_dict = stock_dict
 
         motor = MotorInventario(df_unificado)
         fecha_inicio = date.today()
@@ -314,7 +392,8 @@ def crear_vista_dashboard(page: ft.Page):
             ) from mem_err
 
         logica = LogicaNegocio()
-        df_alertas = logica.evaluar_stock(df_predicciones, stock_dict, umbral_seguridad)
+        # Pasar el diccionario de estrategias de AppState para la evaluación
+        df_alertas = logica.evaluar_stock(df_predicciones, stock_dict, umbral_seguridad, estrategias_dict=app_state.estrategias)
 
         return df_alertas, df_metricas, df_unificado, df_predicciones, df_usuario
 
