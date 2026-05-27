@@ -5,15 +5,15 @@ import os
 
 productos = {
     "Cable de Red Cat6 3m": {"lam": 1.5},
-    "Pasta Térmica Arctic": {"lam": 1.5},
-    "Memoria USB 64GB": {"lam": 0.9},
-    "Memoria RAM 16GB DDR4": {"lam": 0.20},
-    "Disco Duro SSD 1TB": {"lam": 0.3},
-    "Monitor 24 Pulgadas": {"lam": 0.1},
-    "Tarjeta Gráfica RTX 4060": {"lam": 0.15},
-    "Laptop Gaming Asus": {"lam": 0.155},
-    "Laptop Dell Inspiron": {"lam": 0.2},
-    "Procesador Ryzen 5": {"lam": 0.3}
+    "Pasta Térmica Arctic": {"lam": 1.4},
+    "Memoria USB 64GB": {"lam": 1.2},
+    "Memoria RAM 16GB DDR4": {"lam": 0.0020},
+    "Disco Duro SSD 1TB": {"lam": 0.0030},
+    "Monitor 24 Pulgadas": {"lam": 0.0010},
+    "Tarjeta Gráfica RTX 4060": {"lam": 0.0015},
+    "Laptop Gaming Asus": {"lam": 0.0015},
+    "Laptop Dell Inspiron": {"lam": 0.0020},
+    "Procesador Ryzen 5": {"lam": 0.0030}
 }
 
 ruta_salida = os.path.join(
@@ -27,9 +27,19 @@ def obtener_nombre_historico():
 def obtener_lambda_ajustado(producto, params, fecha):
     lam = params["lam"]
 
+    # 1. Estacionalidad por día de la semana (Viernes=4, Sábado=5, Domingo=6 -> +35%)
+    if fecha.weekday() in [4, 5, 6]:
+        lam *= 1.35
+
+    # 2. Tendencia de crecimiento anual (+8% acumulado por año a partir del base 2024)
+    años_transcurridos = max(0, fecha.year - 2024)
+    lam *= (1.08 ** años_transcurridos)
+
+    # 3. Quincenas
     if fecha.day in [15, 16, 30, 31]:
         lam *= 1.5
 
+    # 4. Temporada navideña (noviembre y diciembre)
     if fecha.month in [11, 12]:
         if lam >= 2:
             lam *= 1.5
