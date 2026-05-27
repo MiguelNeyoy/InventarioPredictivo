@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from validador import ValidadorDatos
 from predictor import MotorInventario
@@ -8,8 +9,11 @@ print("=== INICIANDO PRUEBA DEL FLUJO BACKEND MODULARIZADO ===\n")
 # Cargar datos del mes actual
 print("Cargando datos del mes actual...")
 try:
-    df_crudo = pd.read_csv("./ArchivosCVS/ventas_mes_actual.csv")
-    df_crudo["Ventas"] = df_crudo["Cantidad"]  # Renombrar para consistencia
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(base_dir, "..", "ArchivosCSV", "ventas_mes_actual.csv")
+    df_crudo = pd.read_csv(csv_path)
+    if "Cantidad" in df_crudo.columns:
+        df_crudo["Ventas"] = df_crudo["Cantidad"]  # Renombrar para consistencia si viene de origen anterior
     print("Datos del mes actual cargados correctamente.")
     print("Primeros registros:\n", df_crudo.head())
 except Exception as e:
@@ -53,16 +57,21 @@ print("\nComparación Estimado vs Real:")
 print(comparacion)
 
 print("\n--- Métricas de Precisión (MAE / RMSE) ---")
-df_metricas = mi_motor.calcular_metricas(dias_test=15)
+_, df_metricas = mi_motor.generar_prediccion_y_metricas(start_date, end_date, dias_test=15)
 print(df_metricas)
 
 # Simulamos un diccionario de stock actual (lo que habría en la bodega hoy)
 stock_falso = {
-    "Laptop Dell Inspiron": 50,
-    "Procesador Ryzen 5": 20,
-    "Memoria RAM 16GB": 100,
-    "Tarjeta Gráfica RTX 4060": 10,
-    "Monitor 24 pulgadas": 30,
+    "Cable de Red Cat6 3m": 500,
+    "Pasta Térmica Arctic": 150,
+    "Memoria USB 64GB": 200,
+    "Memoria RAM 16GB DDR4": 8,
+    "Disco Duro SSD 1TB": 6,
+    "Monitor 24 Pulgadas": 2,
+    "Tarjeta Gráfica RTX 4060": 5,
+    "Laptop Gaming Asus": 4,
+    "Laptop Dell Inspiron": 6,
+    "Procesador Ryzen 5": 5,
 }
 
 # 3. REGLAS DE NEGOCIO
@@ -73,3 +82,37 @@ df_alertas = logica.evaluar_stock(df_resultados, stock_falso, porcentaje_segurid
 print("\n=== RESULTADO FINAL QUE SE ENVIARÁ A FLET / FRONTEND === ")
 # Imprimimos la tabla final bonita en la consola
 print(df_alertas.to_string(index=False))
+
+# 4. GRAFICAS POR DEFECTO DE PROPHET
+print("\n--- Fase 4: Generando Gráfica por Defecto de Prophet ---")
+try:
+    from prophet import Prophet
+    import matplotlib.pyplot as plt
+    
+    # Tomamos un producto de alta rotación para la demo gráfica
+    producto_demo = "Cable de Red Cat6 3m"
+    print(f"Generando gráfico nativo de Prophet para: {producto_demo}...")
+    
+    df_demo = df_unificado[df_unificado["Producto"] == producto_demo].copy()
+    df_demo = df_demo.sort_values("ds")
+    
+    # Entrenar modelo demo
+    modelo_demo = Prophet(holidays=mi_motor.feriados)
+    modelo_demo.fit(df_demo[["ds", "y"]])
+    
+    # Crear periodo futuro extendido para que se aprecie la predicción
+    futuro_demo = modelo_demo.make_future_dataframe(periods=30)
+    prediccion_demo = modelo_demo.predict(futuro_demo)
+    
+    # Generar las figuras
+    fig1 = modelo_demo.plot(prediccion_demo)
+    plt.title(f"Predicción Nata de Prophet - {producto_demo}")
+    
+    fig2 = modelo_demo.plot_components(prediccion_demo)
+    
+    print("\n[INFO] Desplegando ventanas interactivas...")
+    print("[INFO] Cierra las ventanas de los gráficos para terminar la ejecución del script.")
+    plt.show()
+    
+except Exception as e:
+    print(f"No se pudieron generar los gráficos por defecto de Prophet. Detalle: {e}")
