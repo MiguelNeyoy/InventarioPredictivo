@@ -86,7 +86,7 @@ def crear_upload_panel(
         bgcolor = ft.Colors.WHITE,
         padding = 20,
         border_radius = 10,
-        border=ft.border.all(1, ft.Colors.GREY_300),
+        border=ft.Border.all(1, ft.Colors.GREY_300),
     )
 
     return panel, boton_exportar
