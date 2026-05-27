@@ -10,11 +10,30 @@ class ValidadorDatos:
 
     def __init__(self):
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        csv_path = os.path.join(base_dir, "..", "ArchivosCSV", "historico_maestro.csv")
-        self.df_historico = pd.read_csv(csv_path)
-        # self.df_historico["Ventas"] = self.df_historico["Cantidad"]
+        csv_path_hw = os.path.join(base_dir, "..", "ArchivosCSV", "historico_maestro.csv")
+        csv_path_sv = os.path.join(base_dir, "..", "ArchivosCSV", "historico_servicios.csv")
+        
+        df_hw = pd.read_csv(csv_path_hw) if os.path.exists(csv_path_hw) else pd.DataFrame(columns=["Fecha", "Producto", "Ventas"])
+        df_sv = pd.read_csv(csv_path_sv) if os.path.exists(csv_path_sv) else pd.DataFrame(columns=["Fecha", "Producto", "Ventas"])
+        
+        self.df_historico = pd.concat([df_hw, df_sv], ignore_index=True)
         self.df_historico["ds"] = pd.to_datetime(self.df_historico["Fecha"])
-        self.df_historico["y"] = self.df_historico["Ventas"]
+        self.df_historico["y"] = pd.to_numeric(self.df_historico["Ventas"], errors="coerce").fillna(0)
+        
+        # Limpieza de Outliers (ej. RAM de 241 unidades en un solo día)
+        cleaned_rows = []
+        for prod, group in self.df_historico.groupby("Producto"):
+            group = group.copy()
+            median_val = group["y"].median()
+            if pd.isna(median_val) or median_val <= 0:
+                median_val = 1
+            threshold = max(10.0, median_val * 10.0)
+            # Reemplazar valores atípicos con la mediana
+            group.loc[group["y"] > threshold, "y"] = median_val
+            cleaned_rows.append(group)
+            
+        if cleaned_rows:
+            self.df_historico = pd.concat(cleaned_rows, ignore_index=True)
 
     def validar_y_limpiar(self, df_crudo):
         """
