@@ -29,6 +29,8 @@ class AppState:
         self.predicciones = None
         self.metricas = None
         self.df_historico = None
+        self.df_usuario = None
+        self.df_pred_bruto = None
         self.ruta_archivo_ventas = ""
         self.ruta_archivo_stock = ""
         self.dias_prediccion = 0
@@ -223,7 +225,7 @@ def crear_vista_dashboard(page: ft.Page):
 
         try:
             print("[DEBUG] Llamando a _procesar_prediccion_sync")
-            df_alertas, df_metricas, df_hist, df_pred = await asyncio.to_thread(
+            df_alertas, df_metricas, df_hist, df_pred, df_usuario = await asyncio.to_thread(
                 _procesar_prediccion_sync,
                 app_state.ruta_archivo_ventas,
                 app_state.ruta_archivo_stock,
@@ -244,6 +246,8 @@ def crear_vista_dashboard(page: ft.Page):
         app_state.predicciones = df_alertas
         app_state.metricas = df_metricas
         app_state.df_historico = df_hist
+        app_state.df_usuario = df_usuario
+        app_state.df_pred_bruto = df_pred
         app_state.dias_prediccion = dias
         app_state.umbral_seguridad = int(slider_umbral.value)
 
@@ -312,7 +316,7 @@ def crear_vista_dashboard(page: ft.Page):
         logica = LogicaNegocio()
         df_alertas = logica.evaluar_stock(df_predicciones, stock_dict, umbral_seguridad)
 
-        return df_alertas, df_metricas, df_unificado, df_predicciones
+        return df_alertas, df_metricas, df_unificado, df_predicciones, df_usuario
 
     def _actualizar_graficos_thread(df_hist, df_alertas):
         return crear_grafico_linea(df_hist, df_alertas, "Tendencia Histórica"), crear_grafico_barras(df_alertas, "Ventas por Producto")

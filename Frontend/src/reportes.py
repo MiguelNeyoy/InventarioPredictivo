@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 
 from components.chart_line import crear_grafico_linea
 from components.chart_bar import crear_grafico_barras, crear_top_productos_chart
+from components.chart_pie import crear_grafico_pastel
 
 
 def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=None, df_historico=None):
@@ -50,11 +51,11 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
                 bgcolor=ft.Colors.WHITE,
                 padding=20,
                 border_radius=12,
-                border=ft.border.all(1, card_border),
+                border=ft.Border.all(1, card_border),
                 shadow=ft.BoxShadow(
                     blur_radius=10, color=ft.Colors.BLACK12, offset=ft.Offset(0, 3)
                 ),
-                margin=ft.margin.only(bottom=20),
+                margin=ft.Margin.only(bottom=20),
             )
 
         # Crear filas de la tabla de métricas
@@ -142,11 +143,11 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
             bgcolor=ft.Colors.WHITE,
             padding=20,
             border_radius=12,
-            border=ft.border.all(1, card_border),
+            border=ft.Border.all(1, card_border),
             shadow=ft.BoxShadow(
                 blur_radius=10, color=ft.Colors.BLACK12, offset=ft.Offset(0, 3)
             ),
-            margin=ft.margin.only(bottom=20),
+            margin=ft.Margin.only(bottom=20),
         )
 
     # Encabezado "Centro de Reportes Analíticos"
@@ -173,7 +174,7 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
             alignment=ft.MainAxisAlignment.START,
             vertical_alignment=ft.CrossAxisAlignment.END,
         ),
-        margin=ft.margin.only(bottom=20),
+        margin=ft.Margin.only(bottom=20),
     )  # Fin-encabezado
 
     # Tarjetas KPI
@@ -199,7 +200,7 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
                                     weight=ft.FontWeight.BOLD,
                                     size=12,
                                 ),
-                                padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                                padding=ft.Padding.symmetric(horizontal=8, vertical=4),
                                 bgcolor=bg_porcentaje,
                                 border_radius=4,
                             ),
@@ -218,7 +219,7 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
             bgcolor=ft.Colors.WHITE,
             padding=20,
             border_radius=12,
-            border=ft.border.all(1, card_border),
+            border=ft.Border.all(1, card_border),
             shadow=ft.BoxShadow(
                 blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
             ),
@@ -336,185 +337,115 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
     #         margin=ft.margin.only(bottom=20),
     #     )
 
-    # Tabla de Historial Reciente
-    tabla_reportes = ft.Container(
-        content=ft.Column(
-            [
-                ft.Row(
-                    [
-                        ft.Text(
-                            "Reportes Recientes",
-                            size=18,
-                            weight=ft.FontWeight.BOLD,
-                            color=text_on_bg,
-                        ),
-                        ft.TextButton(
-                            "Ver todos >", style=ft.ButtonStyle(color=primary)
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                ),
-                ft.DataTable(
-                    columns=[
-                        ft.DataColumn(
+    # Gráfica de pastel de popularidad de productos (Demanda Estimada)
+    if ultima_prediccion is not None and not ultima_prediccion.empty:
+        grafico_pastel_completo = crear_grafico_pastel(
+            ultima_prediccion,
+            titulo="Popularidad de Productos (Demanda Estimada)"
+        )
+        seccion_grafico_pastel = ft.Container(
+            content=grafico_pastel_completo,
+            bgcolor=ft.Colors.WHITE,
+            padding=10,
+            border_radius=12,
+            border=ft.Border.all(1, card_border),
+            shadow=ft.BoxShadow(
+                blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
+            ),
+            margin=ft.Margin.only(bottom=20),
+        )
+    else:
+        seccion_grafico_pastel = ft.Container(
+            content=ft.Column(
+                [
+                    ft.Row(
+                        [
+                            ft.Icon(ft.Icons.PIE_CHART, color=primary, size=20),
                             ft.Text(
-                                "NOMBRE DEL REPORTE",
-                                size=10,
+                                "Popularidad de Productos (Demanda Estimada)",
+                                size=18,
                                 weight=ft.FontWeight.BOLD,
-                                color=secondary,
-                            )
+                                color=text_on_bg,
+                            ),
+                        ]
+                    ),
+                    ft.Container(
+                        content=ft.Text(
+                            "Ejecute una predicción para observar la popularidad de productos",
+                            size=14,
+                            color=secondary,
+                            italic=True,
                         ),
-                        ft.DataColumn(
+                        padding=10,
+                        bgcolor=ft.Colors.GREY_50,
+                        border_radius=8,
+                    ),
+                ]
+            ),
+            bgcolor=ft.Colors.WHITE,
+            padding=20,
+            border_radius=12,
+            border=ft.Border.all(1, card_border),
+            shadow=ft.BoxShadow(
+                blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
+            ),
+            margin=ft.Margin.only(bottom=20),
+        )
+
+    # Gráfica de barras de todos los artículos predichos
+    if ultima_prediccion is not None and not ultima_prediccion.empty:
+        grafico_barras_completo = crear_grafico_barras(
+            ultima_prediccion,
+            titulo="Ventas Proyectadas por Artículo"
+        )
+        seccion_grafico_barras = ft.Container(
+            content=grafico_barras_completo,
+            bgcolor=ft.Colors.WHITE,
+            padding=10,
+            border_radius=12,
+            border=ft.Border.all(1, card_border),
+            shadow=ft.BoxShadow(
+                blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
+            ),
+            margin=ft.Margin.only(bottom=20),
+        )
+    else:
+        seccion_grafico_barras = ft.Container(
+            content=ft.Column(
+                [
+                    ft.Row(
+                        [
+                            ft.Icon(ft.Icons.BAR_CHART, color=primary, size=20),
                             ft.Text(
-                                "GENERADO POR",
-                                size=10,
+                                "Ventas Proyectadas por Artículo",
+                                size=18,
                                 weight=ft.FontWeight.BOLD,
-                                color=secondary,
-                            )
+                                color=text_on_bg,
+                            ),
+                        ]
+                    ),
+                    ft.Container(
+                        content=ft.Text(
+                            "Ejecute una predicción para observar la gráfica de barras de artículos",
+                            size=14,
+                            color=secondary,
+                            italic=True,
                         ),
-                        ft.DataColumn(
-                            ft.Text(
-                                "FECHA",
-                                size=10,
-                                weight=ft.FontWeight.BOLD,
-                                color=secondary,
-                            )
-                        ),
-                        ft.DataColumn(
-                            ft.Text(
-                                "ESTADO",
-                                size=10,
-                                weight=ft.FontWeight.BOLD,
-                                color=secondary,
-                            )
-                        ),
-                    ],
-                    rows=[
-                        ft.DataRow(
-                            cells=[
-                                ft.DataCell(
-                                    ft.Row(
-                                        [
-                                            ft.Icon(
-                                                ft.Icons.DESCRIPTION,
-                                                color=primary,
-                                                size=16,
-                                            ),
-                                            ft.Text("Ventas Q3 - Consolidado"),
-                                        ]
-                                    )
-                                ),
-                                ft.DataCell(
-                                    ft.Text("Admin Sistema", color=secondary, size=14)
-                                ),
-                                ft.DataCell(
-                                    ft.Text("Oct 12, 2024", color=secondary, size=14)
-                                ),
-                                ft.DataCell(
-                                    ft.Container(
-                                        content=ft.Text(
-                                            "Completado",
-                                            size=12,
-                                            color=ft.Colors.GREEN_700,
-                                            weight=ft.FontWeight.BOLD,
-                                        ),
-                                        bgcolor=ft.Colors.GREEN_100,
-                                        padding=ft.padding.symmetric(
-                                            horizontal=10, vertical=2
-                                        ),
-                                        border_radius=15,
-                                    )
-                                ),
-                            ]
-                        ),
-                        ft.DataRow(
-                            cells=[
-                                ft.DataCell(
-                                    ft.Row(
-                                        [
-                                            ft.Icon(
-                                                ft.Icons.ANALYTICS,
-                                                color=primary,
-                                                size=16,
-                                            ),
-                                            ft.Text("Análisis de Demanda - Invierno"),
-                                        ]
-                                    )
-                                ),
-                                ft.DataCell(
-                                    ft.Text("Admin Sistema", color=secondary, size=14)
-                                ),
-                                ft.DataCell(
-                                    ft.Text("Oct 10, 2024", color=secondary, size=14)
-                                ),
-                                ft.DataCell(
-                                    ft.Container(
-                                        content=ft.Text(
-                                            "Completado",
-                                            size=12,
-                                            color=ft.Colors.GREEN_700,
-                                            weight=ft.FontWeight.BOLD,
-                                        ),
-                                        bgcolor=ft.Colors.GREEN_100,
-                                        padding=ft.padding.symmetric(
-                                            horizontal=10, vertical=2
-                                        ),
-                                        border_radius=15,
-                                    )
-                                ),
-                            ]
-                        ),
-                        ft.DataRow(
-                            cells=[
-                                ft.DataCell(
-                                    ft.Row(
-                                        [
-                                            ft.Icon(
-                                                ft.Icons.SHOW_CHART,
-                                                color=primary,
-                                                size=16,
-                                            ),
-                                            ft.Text("Pronóstico de Ventas Q4"),
-                                        ]
-                                    )
-                                ),
-                                ft.DataCell(
-                                    ft.Text("Admin Sistema", color=secondary, size=14)
-                                ),
-                                ft.DataCell(
-                                    ft.Text("Oct 08, 2024", color=secondary, size=14)
-                                ),
-                                ft.DataCell(
-                                    ft.Container(
-                                        content=ft.Text(
-                                            "En proceso",
-                                            size=12,
-                                            color=ft.Colors.ORANGE_700,
-                                            weight=ft.FontWeight.BOLD,
-                                        ),
-                                        bgcolor=ft.Colors.ORANGE_100,
-                                        padding=ft.padding.symmetric(
-                                            horizontal=10, vertical=2
-                                        ),
-                                        border_radius=15,
-                                    )
-                                ),
-                            ]
-                        ),
-                    ],
-                    expand=True,
-                    heading_row_color=ft.Colors.GREY_50,
-                ),
-            ]
-        ),
-        bgcolor=ft.Colors.WHITE,
-        padding=30,
-        border_radius=12,
-        border=ft.border.all(1, card_border),
-        shadow=ft.BoxShadow(
-            blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
-        ),
-    )  # fin-tabla_reportes
+                        padding=10,
+                        bgcolor=ft.Colors.GREY_50,
+                        border_radius=8,
+                    ),
+                ]
+            ),
+            bgcolor=ft.Colors.WHITE,
+            padding=20,
+            border_radius=12,
+            border=ft.Border.all(1, card_border),
+            shadow=ft.BoxShadow(
+                blur_radius=15, color=ft.Colors.BLACK12, offset=ft.Offset(0, 4)
+            ),
+            margin=ft.Margin.only(bottom=20),
+        )
 
     contenido_principal = ft.Column(
         [
@@ -522,8 +453,9 @@ def crear_vista_reportes(page: ft.Page, ultima_prediccion=None, ultima_metrica=N
             kpis,
             tendencias_chart,
             crear_seccion_metricas(),
+            seccion_grafico_barras,
             top_productos if top_productos else ft.Container(),
-            tabla_reportes,
+            seccion_grafico_pastel,
         ],
         scroll=ft.ScrollMode.AUTO,
         expand=True,
