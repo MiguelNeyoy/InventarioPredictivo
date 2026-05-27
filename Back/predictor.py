@@ -59,15 +59,24 @@ class MotorInventario:
                 self.df_historico["Producto"] == articulo
             ].copy()
 
-            modelo = Prophet(holidays=self.feriados)
-            modelo.fit(df_filtrado[["ds", "y"]])
+            if len(df_filtrado) < 2 or df_filtrado["y"].notna().sum() < 2:
+                # Fallback para baja frecuencia histórica: promedio diario de ventas por días de predicción
+                total_dias_hist = (self.df_historico["ds"].max() - self.df_historico["ds"].min()).days
+                total_dias_hist = max(total_dias_hist, 1)
+                total_ventas = df_filtrado["y"].sum()
+                ventas_promedio_diaria = total_ventas / total_dias_hist
+                dias_pred = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days
+                dias_pred = max(dias_pred, 1)
+                total_estimado = ventas_promedio_diaria * dias_pred
+            else:
+                modelo = Prophet(holidays=self.feriados)
+                modelo.fit(df_filtrado[["ds", "y"]])
 
-            futuro = pd.DataFrame(
-                {"ds": pd.date_range(start=start_date, end=end_date, freq="D")}
-            )
-            prediccion = modelo.predict(futuro)
-
-            total_estimado = prediccion["yhat"].sum()
+                futuro = pd.DataFrame(
+                    {"ds": pd.date_range(start=start_date, end=end_date, freq="D")}
+                )
+                prediccion = modelo.predict(futuro)
+                total_estimado = prediccion["yhat"].sum()
 
             resultados.append(
                 {
@@ -91,14 +100,24 @@ class MotorInventario:
             ].copy()
             df_articulo = df_articulo.sort_values("ds")
 
-            modelo = Prophet(holidays=self.feriados)
-            modelo.fit(df_articulo[["ds", "y"]])
+            if len(df_articulo) < 2 or df_articulo["y"].notna().sum() < 2:
+                # Fallback para baja frecuencia histórica
+                total_dias_hist = (self.df_historico["ds"].max() - self.df_historico["ds"].min()).days
+                total_dias_hist = max(total_dias_hist, 1)
+                total_ventas = df_articulo["y"].sum()
+                ventas_promedio_diaria = total_ventas / total_dias_hist
+                dias_pred = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days
+                dias_pred = max(dias_pred, 1)
+                total_estimado = ventas_promedio_diaria * dias_pred
+            else:
+                modelo = Prophet(holidays=self.feriados)
+                modelo.fit(df_articulo[["ds", "y"]])
 
-            futuro = pd.DataFrame(
-                {"ds": pd.date_range(start=start_date, end=end_date, freq="D")}
-            )
-            prediccion = modelo.predict(futuro)
-            total_estimado = prediccion["yhat"].sum()
+                futuro = pd.DataFrame(
+                    {"ds": pd.date_range(start=start_date, end=end_date, freq="D")}
+                )
+                prediccion = modelo.predict(futuro)
+                total_estimado = prediccion["yhat"].sum()
 
             resultados.append(
                 {
@@ -111,12 +130,21 @@ class MotorInventario:
                 df_entrenamiento = df_articulo.iloc[:-dias_test]
                 df_test = df_articulo.iloc[-dias_test:]
 
-                modelo_test = Prophet(holidays=self.feriados)
-                modelo_test.fit(df_entrenamiento[["ds", "y"]])
-                prediccion_test = modelo_test.predict(df_test[["ds"]])
+                if len(df_entrenamiento) < 2 or df_entrenamiento["y"].notna().sum() < 2:
+                    # Fallback para métricas en conjuntos de entrenamiento extremadamente pequeños
+                    total_dias_entrenamiento = (df_entrenamiento["ds"].max() - df_entrenamiento["ds"].min()).days
+                    total_dias_entrenamiento = max(total_dias_entrenamiento, 1)
+                    total_ventas_entrenamiento = df_entrenamiento["y"].sum()
+                    ventas_promedio_diaria_ent = total_ventas_entrenamiento / total_dias_entrenamiento
+                    y_predicho = np.full(len(df_test), ventas_promedio_diaria_ent)
+                else:
+                    modelo_test = Prophet(holidays=self.feriados)
+                    modelo_test.fit(df_entrenamiento[["ds", "y"]])
+                    prediccion_test = modelo_test.predict(df_test[["ds"]])
+                    y_predicho = prediccion_test["yhat"].values
 
                 y_real = df_test["y"].values
-                y_predicho = prediccion_test["yhat"].values
+                y_predicho = np.clip(y_predicho, 0, None)
 
                 mae = mean_absolute_error(y_real, y_predicho)
                 rmse = np.sqrt(mean_squared_error(y_real, y_predicho))
